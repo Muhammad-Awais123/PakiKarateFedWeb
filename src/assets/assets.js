@@ -1,5 +1,15 @@
 import logo from './logo.svg'
+import Logo from './PKF.png'
+// import Dark_Logo from './darlogo.jpg'
+import karate_image from './karate_about.png'
 import arrow_icon from './arrow_icon.svg'
+import darlogo from './darlogo.jpeg'
+
+import kulsoom from './kalsoom.jpeg'
+import kashif from './kashif.jpg'
+import benish from './benish.jpeg'
+import ghulam from './ghulam.jpeg'
+
 import group_profile from './group_profile.png'
 import bgImage1 from './bgImage1.png'
 import bgImage2 from './bgImage2.png'
@@ -45,6 +55,14 @@ export const company_logos = [
 
 const assets = {
   logo,
+  Logo,
+  darlogo,
+  // Home_Image,
+  // Dark_Logo,
+  benish,
+  kulsoom,
+  ghulam,
+  kashif,
   arrow_icon,
   group_profile,
   bgImage1,
@@ -64,6 +82,7 @@ const assets = {
   person_icon,
   facebook_icon,
   twitter_icon,
+  karate_image,
   instagram_icon,
   linkedin_icon,
   logo_dark,
