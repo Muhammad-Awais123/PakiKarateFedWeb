@@ -1,28 +1,57 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { useInView } from 'react-intersection-observer';
+import Title from './Title';
 import assets from '../assets/assets';
 import { 
   RiTrophyLine, 
-  RiGroupLine, 
+  RiTeamLine, 
   RiMedalLine, 
-  RiGlobalLine,
-  RiFocus3Line,
-  RiArrowRightLine 
+  RiCalendarCheckLine,
+  RiArrowRightLine,
+  RiShieldStarLine
 } from 'react-icons/ri';
 
 const AboutUs = () => {
   const [ref, inView] = useInView({
     triggerOnce: true,
-    threshold: 0.2,
+    threshold: 0.1,
   });
 
   const achievements = [
-    { icon: <RiTrophyLine />, value: 'Gold', label: 'South Asian Games' },
-    { icon: <RiGroupLine />, value: '160+', label: 'Affiliated Clubs' },
-    { icon: <RiGlobalLine />, value: 'WKF', label: 'Official Member' },
-    { icon: <RiMedalLine />, value: '1965', label: 'Founded Year' },
+    { icon: <RiTrophyLine />, value: '50+', label: 'Int. Medals' },
+    { icon: <RiTeamLine />, value: '1000+', label: 'Athletes' },
+    { icon: <RiMedalLine />, value: '25+', label: 'National Titles' },
+    { icon: <RiCalendarCheckLine />, value: '58', label: 'Years' },
   ];
+
+  const features = [
+    {
+      title: 'Elite Training Programs',
+      description: 'World-class coaching facilities with international standard equipment.'
+    },
+    {
+      title: 'National Championships',
+      description: 'Annual tournaments showcasing the best talent from all provinces.'
+    },
+    {
+      title: 'International Exposure',
+      description: 'Regular participation in Asian Games and World Championships.'
+    }
+  ];
+
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: { 
+      opacity: 1, 
+      transition: { staggerChildren: 0.2, delayChildren: 0.3 } 
+    }
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.6 } }
+  };
 
   return (
     <section
@@ -30,94 +59,115 @@ const AboutUs = () => {
       ref={ref}
       className="relative w-full py-20 lg:py-32 overflow-hidden bg-white dark:bg-[#050505] transition-colors duration-700"
     >
-      <div className="max-w-7xl mx-auto px-6 lg:px-12">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-20 items-center">
+      <div className="relative max-w-7xl mx-auto px-6 lg:px-12">
+        <div className="flex flex-col lg:flex-row items-center gap-16 lg:gap-24">
           
-          {/* LEFT: CONTENT AREA */}
+          {/* LEFT CONTENT */}
           <motion.div
-            initial={{ opacity: 0, x: -30 }}
+            initial={{ opacity: 0, x: -40 }}
             animate={inView ? { opacity: 1, x: 0 } : {}}
-            transition={{ duration: 1 }}
-            className="lg:col-span-7"
+            transition={{ duration: 1, ease: "easeOut" }}
+            className="flex-1 w-full order-2 lg:order-1"
           >
-            {/* Tagline Badge */}
-            <div className="flex items-center gap-3 mb-6">
-              <span className="px-4 py-1 bg-green-500/10 text-green-600 dark:text-green-500 text-[10px] font-bold uppercase tracking-[0.3em] rounded-full">
-                Legacy of Honor
-              </span>
+            {/* Badge */}
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#008000]/10 text-[#008000] text-[10px] font-bold uppercase tracking-[0.2em] mb-8">
+              <RiShieldStarLine className="text-sm" />
+              <span>Official National Federation</span>
             </div>
 
-            {/* Heading - Balanced & Modern */}
-            <h2 className="text-4xl md:text-5xl lg:text-6xl font-black text-black dark:text-white leading-tight uppercase mb-6">
-              Official Body of <br />
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-green-600 to-green-400">
-                Pakistan Karate
-              </span>
-            </h2>
+            {/* Title Component */}
+            <Title 
+              title={
+                <span className="text-4xl md:text-6xl font-black uppercase leading-tight block">
+                  <span className="text-gray-900 dark:text-white">Pakistan </span>
+                  <span className="text-[#008000] italic">Karate</span>
+                </span>
+              }
+              desc="Empowering champions, preserving tradition, and building a legacy of excellence in martial arts since 1965. We are the official governing body for Karate in Pakistan."
+            />
 
-            {/* Informational Text from Official Context */}
-            <div className="space-y-4 text-gray-600 dark:text-gray-400 text-base md:text-lg leading-relaxed">
-              <p>
-                The <span className="text-black dark:text-white font-bold">Pakistan Karate Federation (PKF)</span> is the sole governing body for the sport of Karate in Pakistan. Affiliated with the <span className="text-green-600 font-semibold">World Karate Federation (WKF)</span> and Asian Karate Federation, we have been nurturing world-class talent since our inception in 1965.
-              </p>
-              <p>
-                Recognized by the Pakistan Sports Board and Pakistan Olympic Association, the PKF is dedicated to promoting the physical and mental discipline of Karate across all provinces, from grassroots dojos to international podiums.
-              </p>
-            </div>
+            {/* Features List */}
+            <motion.div
+              variants={containerVariants}
+              initial="hidden"
+              animate={inView ? "visible" : "hidden"}
+              className="mt-10 space-y-6"
+            >
+              {features.map((feature, idx) => (
+                <motion.div key={idx} variants={itemVariants} className="flex items-start gap-4 group">
+                  <div className="mt-1.5 w-2 h-2 rounded-full bg-[#008000] group-hover:scale-150 transition-transform" />
+                  <div>
+                    <h3 className="font-black text-gray-900 dark:text-white uppercase text-xs tracking-widest">
+                      {feature.title}
+                    </h3>
+                    <p className="text-gray-500 dark:text-gray-400 text-sm mt-1 leading-relaxed">
+                      {feature.description}
+                    </p>
+                  </div>
+                </motion.div>
+              ))}
+            </motion.div>
 
-            {/* Modern Feature Cards */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-10">
-              <div className="p-6 bg-gray-50 dark:bg-white/5 border border-black/5 dark:border-white/10 rounded-2xl group hover:border-green-500/50 transition-all">
-                <RiFocus3Line className="text-3xl text-green-600 mb-3" />
-                <h4 className="text-sm font-black text-black dark:text-white uppercase mb-1">Our Mission</h4>
-                <p className="text-xs text-gray-500">To maintain the highest standards of Shotokan and other traditional styles while excelling in modern sports karate.</p>
-              </div>
-              <div className="p-6 bg-gray-50 dark:bg-white/5 border border-black/5 dark:border-white/10 rounded-2xl group hover:border-green-500/50 transition-all">
-                <RiGlobalLine className="text-3xl text-green-600 mb-3" />
-                <h4 className="text-sm font-black text-black dark:text-white uppercase mb-1">Affiliations</h4>
-                <p className="text-xs text-gray-500">Proud members of the South Asian Karate Federation and officially recognized by the Government of Pakistan.</p>
-              </div>
-            </div>
-
-            <button className="mt-10 flex items-center gap-2 text-green-600 font-black uppercase tracking-widest text-[11px] hover:gap-4 transition-all">
-              Learn More About PKF History <RiArrowRightLine />
-            </button>
+            {/* CTA */}
+            <motion.button
+              whileHover={{ x: 5 }}
+              className="mt-12 flex items-center gap-3 text-black dark:text-white font-black uppercase tracking-widest text-[11px] border-b-2 border-[#008000] pb-2 transition-all"
+            >
+              Discover Our Journey
+              <RiArrowRightLine className="text-[#008000]" />
+            </motion.button>
           </motion.div>
 
-          {/* RIGHT: IMAGE & FLOATING STATS */}
+          {/* RIGHT IMAGE SECTION (The Modern Frame Design) */}
           <motion.div
             initial={{ opacity: 0, scale: 0.9 }}
             animate={inView ? { opacity: 1, scale: 1 } : {}}
-            transition={{ duration: 1 }}
-            className="lg:col-span-5 relative"
+            transition={{ duration: 1.2, ease: "easeOut" }}
+            className="flex-1 w-full relative order-1 lg:order-2"
           >
-            {/* Main Image Frame */}
-            <div className="relative rounded-[2rem] overflow-hidden border-8 border-white dark:border-[#111] shadow-2xl">
-              <img 
-                src={assets.Karate_Image} 
-                alt="National Athletes" 
-                className="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-700"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-            </div>
+            <div className="relative w-full max-w-lg mx-auto group">
+              
+              {/* Decorative Background Accents */}
+              <div className="absolute -top-4 -right-4 w-24 h-24 border-t-4 border-r-4 border-[#008000] -z-10 opacity-30" />
+              <div className="absolute -bottom-4 -left-4 w-24 h-24 border-b-4 border-l-4 border-[#008000] -z-10 opacity-30" />
 
-            {/* Stats Overlay Grid */}
-            <div className="absolute -bottom-10 inset-x-0 px-4">
-              <div className="bg-white dark:bg-[#1a1a1a] shadow-xl rounded-2xl p-6 grid grid-cols-2 md:grid-cols-4 gap-4 border border-black/5 dark:border-white/10">
-                {achievements.map((item, idx) => (
-                  <div key={idx} className="text-center">
-                    <div className="text-green-600 text-xl flex justify-center mb-1">{item.icon}</div>
-                    <div className="text-lg font-black text-black dark:text-white">{item.value}</div>
-                    <div className="text-[8px] font-bold uppercase tracking-widest text-gray-400">{item.label}</div>
-                  </div>
-                ))}
+              {/* Main Image Frame */}
+              <div className="relative z-10 p-3 bg-white dark:bg-[#111] border border-gray-100 dark:border-white/10 shadow-2xl">
+                <div className="aspect-[4/5] overflow-hidden grayscale hover:grayscale-0 transition-all duration-1000">
+                  <img
+                    src={assets.karate_image} 
+                    alt="Karate Heritage"
+                    className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-1000"
+                  />
+                </div>
               </div>
+
+              {/* Floating Vertical Ribbon */}
+              <div className="absolute -right-4 top-10 bg-[#008000] text-white py-6 px-2 [writing-mode:vertical-lr] rotate-180 uppercase font-black tracking-[0.3em] text-[9px] z-20 shadow-xl">
+                Legacy • 1965
+              </div>
+
+              {/* Stats - Refined Grid Card */}
+              <div className="absolute -bottom-10 left-1/2 -translate-x-1/2 w-[105%] md:w-[115%] z-30">
+                <div className="bg-white dark:bg-[#1a1a1a] shadow-2xl p-6 border border-gray-100 dark:border-white/5 grid grid-cols-4 gap-2">
+                  {achievements.map((item, idx) => (
+                    <div key={idx} className="text-center group/stat">
+                      <div className="text-[#008000] text-xl flex justify-center mb-1 group-hover/stat:scale-110 transition-transform">
+                        {item.icon}
+                      </div>
+                      <div className="text-lg font-black text-gray-900 dark:text-white leading-none">
+                        {item.value}
+                      </div>
+                      <div className="text-[8px] font-bold text-gray-400 uppercase tracking-tighter mt-1">
+                        {item.label}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
             </div>
-
-            {/* Decorative Element */}
-            <div className="absolute -top-6 -right-6 w-32 h-32 bg-green-500/10 blur-[80px] -z-10 rounded-full" />
           </motion.div>
-
         </div>
       </div>
     </section>

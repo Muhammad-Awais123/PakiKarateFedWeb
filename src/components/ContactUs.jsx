@@ -1,18 +1,13 @@
 import React from 'react';
 import Title from './Title';
-import { motion } from "motion/react";
+import { motion } from "framer-motion";
 import toast from 'react-hot-toast';
-
-// Placeholder icons (agar assets missing ho)
-const person_icon = "https://img.icons8.com/ios-filled/50/ffffff/user.png";
-const email_icon = "https://img.icons8.com/ios-filled/50/ffffff/new-post.png";
-const arrow_icon = "https://img.icons8.com/ios-filled/50/ffffff/arrow.png";
+import { RiUser3Line, RiMailSendLine, RiChat3Line, RiSendPlane2Fill } from 'react-icons/ri';
 
 const ContactUs = () => {
 
   const onSubmit = async (event) => {
     event.preventDefault();
-
     const formData = new FormData(event.target);
     formData.append("access_key", "29434e4f-7d15-41f7-826b-e58664b70447");
 
@@ -21,11 +16,9 @@ const ContactUs = () => {
         method: "POST",
         body: formData
       });
-
       const data = await response.json();
-
       if (data.success) {
-        toast.success('Thank you for your submission!');
+        toast.success('Your message has been delivered!');
         event.target.reset();
       } else {
         toast.error(data.message);
@@ -36,67 +29,124 @@ const ContactUs = () => {
   }
 
   return (
-    <motion.div
-      initial="hidden"
-      whileInView="visible"
-      viewport={{ once: true }}
-      transition={{ staggerChildren: 0.2 }}
-      id='contact-us'
-      className='flex flex-col items-center gap-7 px-4 sm:px-12 lg:px-24 xl:px-40 pt-12 text-gray-700 dark:text-white'
-    >
-      <Title title='Reach out to Pakistan Karate Federation' desc='Join us, ask questions, or register for upcoming championships!' />
+    <section id='contact-us' className='relative py-24 lg:py-36 bg-[#f8fafc] dark:bg-[#030303] overflow-hidden transition-colors duration-700'>
+      
+      {/* ICY AMBIENCE - Animated Glows */}
+      <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-green-500/10 blur-[150px] rounded-full -translate-y-1/2 translate-x-1/2 pointer-events-none" />
+      <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-emerald-500/5 blur-[150px] rounded-full translate-y-1/2 -translate-x-1/2 pointer-events-none" />
 
-      <motion.form
-        initial={{ opacity: 0, y: 30 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5, delay: 0.4 }}
-        viewport={{ once: true }}
-        onSubmit={onSubmit}
-        className='grid sm:grid-cols-2 gap-3 sm:gap-5 max-w-2xl w-full'
-      >
-        <div>
-          <p className='mb-2 text-sm font-medium'>Your name</p>
-          <div className='flex pl-3 rounded-lg border border-gray-300 dark:border-gray-600'>
-            <img
-              src={person_icon}
-              alt="person"
-              loading="lazy"
-              className="w-5 h-5 my-auto"
-            />
-            <input name="name" type="text" placeholder='Enter your name' className='w-full p-3 text-sm outline-none bg-transparent' required/>
-          </div>
-        </div>
-
-        <div>
-          <p className='mb-2 text-sm font-medium'>Email id</p>
-          <div className='flex pl-3 rounded-lg border border-gray-300 dark:border-gray-600'>
-            <img
-              src={email_icon}
-              alt="email"
-              loading="lazy"
-              className="w-5 h-5 my-auto"
-            />
-            <input name="email" type="email" placeholder='Enter your email' className='w-full p-3 text-sm outline-none bg-transparent' required/>
-          </div>
-        </div>
-
-        <div className='sm:col-span-2'>
-          <p className='mb-2 text-sm font-medium'>Message</p>
-          <textarea
-            name="message"
-            rows={8}
-            placeholder='Enter your message'
-            className='w-full p-3 text-sm outline-none rounded-lg border border-gray-300 dark:border-gray-600 bg-transparent'
-            required
+      <div className='max-w-4xl mx-auto px-6 relative z-10'>
+        
+        {/* NEW ELITE TITLE */}
+        <div className="text-center mb-16">
+          <motion.div 
+            initial={{ opacity: 0, y: 10 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            className="inline-block px-4 py-1 rounded-full bg-green-500/10 border border-green-500/20 text-green-600 dark:text-green-400 text-[10px] font-black uppercase tracking-[0.4em] mb-4"
+          >
+            Communication Portal
+          </motion.div>
+          
+          <Title 
+            title={
+              <span className="text-4xl md:text-6xl font-black text-center uppercase tracking-tighter text-gray-900 dark:text-white leading-none">
+                Elite <span className="text-[#008000]">Inquiries</span>
+              </span>
+            } 
+            desc='Connect with the official representatives of Pakistan Karate Federation for memberships, event details, or technical guidance.' 
           />
         </div>
 
-        <button type="submit" className='w-max flex gap-2 bg-[#008000] text-white text-sm px-10 py-3 rounded-full cursor-pointer hover:scale-103 transition-all'>
-          Submit <img src={arrow_icon} alt="arrow" loading="lazy" className='w-4'/>
-        </button>
+        {/* THE ICY GLASS FORM */}
+        <motion.form
+          initial={{ opacity: 0, y: 40 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 1, ease: "circOut" }}
+          viewport={{ once: true }}
+          onSubmit={onSubmit}
+          className='relative group bg-white/30 dark:bg-white/[0.02] backdrop-blur-2xl p-8 md:p-14 border border-white/20 dark:border-white/5 shadow-[0_20px_50px_rgba(0,0,0,0.05)] dark:shadow-none'
+        >
+          {/* Decorative Horizontal Lines */}
+          <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-[#008000]/40 to-transparent" />
+          <div className="absolute bottom-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-[#008000]/40 to-transparent" />
 
-      </motion.form>
-    </motion.div>
+          <div className="grid sm:grid-cols-2 gap-10">
+            
+            {/* Field: Name */}
+            <div className='relative group'>
+              <label className='flex items-center gap-2 mb-3 text-[10px] font-black uppercase tracking-widest text-gray-500 dark:text-gray-400'>
+                <RiUser3Line className="text-[#008000]" /> Full Name
+              </label>
+              <input 
+                name="name" 
+                type="text" 
+                placeholder='e.g. Muhammad Ali' 
+                className='w-full bg-transparent border-b border-gray-200 dark:border-white/10 p-4 text-sm outline-none focus:border-[#008000] transition-all dark:text-white placeholder:text-gray-400 dark:placeholder:text-gray-700' 
+                required
+              />
+            </div>
+
+            {/* Field: Email */}
+            <div className='relative group'>
+              <label className='flex items-center gap-2 mb-3 text-[10px] font-black uppercase tracking-widest text-gray-500 dark:text-gray-400'>
+                <RiMailSendLine className="text-[#008000]" /> Email Address
+              </label>
+              <input 
+                name="email" 
+                type="email" 
+                placeholder='contact@example.com' 
+                className='w-full bg-transparent border-b border-gray-200 dark:border-white/10 p-4 text-sm outline-none focus:border-[#008000] transition-all dark:text-white placeholder:text-gray-400 dark:placeholder:text-gray-700' 
+                required
+              />
+            </div>
+
+            {/* Field: Message */}
+            <div className='sm:col-span-2 relative group'>
+              <label className='flex items-center gap-2 mb-3 text-[10px] font-black uppercase tracking-widest text-gray-500 dark:text-gray-400'>
+                <RiChat3Line className="text-[#008000]" /> Your Message
+              </label>
+              <textarea
+                name="message"
+                rows={4}
+                placeholder='How can we assist you in your Karate journey?'
+                className='w-full bg-transparent border-b border-gray-200 dark:border-white/10 p-4 text-sm outline-none focus:border-[#008000] transition-all dark:text-white resize-none placeholder:text-gray-400 dark:placeholder:text-gray-700'
+                required
+              />
+            </div>
+
+            {/* Icy Action Button */}
+            <div className='sm:col-span-2 flex justify-center mt-6'>
+              <motion.button 
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                type="submit" 
+                className='relative overflow-hidden group bg-transparent border border-[#008000] text-[#008000] dark:text-white font-black uppercase tracking-[0.4em] text-[11px] px-16 py-5 transition-all duration-500'
+              >
+                <span className="relative z-10 flex items-center gap-3">
+                  Send Message <RiSendPlane2Fill className='text-lg' />
+                </span>
+                
+                {/* Hover Fill Effect */}
+                <div className="absolute inset-0 bg-[#008000] translate-y-full group-hover:translate-y-0 transition-transform duration-500 ease-out" />
+              </motion.button>
+            </div>
+          </div>
+        </motion.form>
+
+        {/* REFINED BOTTOM TEXT */}
+        <div className="mt-16 text-center">
+          <p className="text-[10px] font-bold uppercase tracking-[0.5em] text-gray-400 dark:text-gray-600">
+            Official Correspondence • Martial Arts Excellence
+          </p>
+          <div className="mt-4 flex justify-center gap-6 text-[9px] font-black uppercase tracking-widest text-green-700/60 dark:text-green-500/40">
+            <span>Integrity</span>
+            <span>Honor</span>
+            <span>Discipline</span>
+          </div>
+        </div>
+
+      </div>
+    </section>
   )
 }
 

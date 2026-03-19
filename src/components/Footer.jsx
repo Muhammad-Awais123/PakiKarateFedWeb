@@ -1,162 +1,104 @@
-// import React from "react";
-// import { FaFacebookF, FaTwitter, FaInstagram, FaLinkedinIn, FaGithub } from "react-icons/fa";
-
-// const Footer = () => {
-//   return (
-//     <footer className="bg-gray-900 text-white py-8">
-//       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row items-center justify-between">
-        
-//         {/* Developer Credit */}
-//         <div className="mb-4 md:mb-0 text-center md:text-left">
-//           <p>
-//             Developed by{" "}
-//             <a
-//               href="https://awaisweb.vercel.app"
-//               target="_blank"
-//               rel="noopener noreferrer"
-//               className="text-[#008000] font-semibold hover:underline"
-//             >
-//               Muhamad Awais
-//             </a>
-//           </p>
-//         </div>
-
-//         {/* Social Media Links */}
-//         <div className="flex gap-4 text-lg">
-//           <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" className="hover:text-[#008000] transition">
-//             <FaFacebookF />
-//           </a>
-//           <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" className="hover:text-[#008000] transition">
-//             <FaTwitter />
-//           </a>
-//           <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="hover:text-[#008000] transition">
-//             <FaInstagram />
-//           </a>
-//           <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" className="hover:text-[#008000] transition">
-//             <FaLinkedinIn />
-//           </a>
-//           <a href="https://github.com" target="_blank" rel="noopener noreferrer" className="hover:text-[#008000] transition">
-//             <FaGithub />
-//           </a>
-//         </div>
-//       </div>
-
-//       {/* Bottom Text */}
-//       <div className="mt-6 text-center text-gray-400 text-sm">
-//         &copy; {new Date().getFullYear()} Pakistan Karate Federation. All rights reserved.
-//       </div>
-//     </footer>
-//   );
-// };
-
-// export default Footer;
-
 import React from "react";
-import { motion } from "motion/react";
+import { motion } from "framer-motion";
 import { FaInstagram, FaFacebookF, FaTiktok, FaMapMarkerAlt } from "react-icons/fa";
+import { RiShieldStarLine } from "react-icons/ri";
 
 const Footer = () => {
   const year = new Date().getFullYear();
 
   return (
-    <footer className="relative mt-8 bg-gradient-to-b from-[#021f02] via-[#053905] to-[#008000] text-white overflow-hidden">
-
-      {/* Animated background blobs */}
+    <footer className="relative mt-20 bg-gradient-to-b from-[#021f02] via-[#053905] to-[#008000] text-white overflow-hidden">
+      
+      {/* ICY GLASS OVERLAY (Animated Glows) */}
       <motion.div
-        animate={{ x: [0, 50, -50, 0], y: [0, -40, 40, 0] }}
-        transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-        className="absolute w-96 h-96 bg-[#00ff66]/10 rounded-full blur-3xl -top-20 -left-20"
+        animate={{ opacity: [0.3, 0.6, 0.3] }}
+        transition={{ duration: 5, repeat: Infinity }}
+        className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_top_right,rgba(0,255,102,0.1),transparent)] pointer-events-none"
       />
+      
+      <div className="relative z-10 max-w-7xl mx-auto px-6 pt-20 pb-10">
 
-      <motion.div
-        animate={{ x: [0, -60, 60, 0], y: [0, 40, -40, 0] }}
-        transition={{ duration: 25, repeat: Infinity, ease: "linear" }}
-        className="absolute w-[500px] h-[500px] bg-[#00ff88]/10 rounded-full blur-3xl bottom-0 right-0"
-      />
+        {/* Main Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-16 border-b border-white/10 pb-16">
 
-      <div className="relative z-10 max-w-7xl mx-auto px-6 py-16">
-
-        {/* Top Section */}
-        <div className="grid md:grid-cols-4 gap-10">
-
-          {/* Logo / About */}
-          <div>
-            <h2 className="text-2xl font-bold mb-4 text-white">Pakistan Karate Federation</h2>
-            <p className="text-white/80 text-sm">
-              Experience the power, discipline, and thrill of Pakistan’s premier martial arts championships.
+          {/* Logo / Brand Identity */}
+          <div className="space-y-6">
+            <div className="flex items-center gap-3">
+              <div className="p-2 bg-white/10 backdrop-blur-md border border-white/20 rounded-lg">
+                <RiShieldStarLine size={24} className="text-green-400" />
+              </div>
+              <span className="font-black uppercase tracking-tighter text-xl">
+                PKF <span className="text-green-400 italic">Official</span>
+              </span>
+            </div>
+            <p className="text-white/70 text-sm leading-relaxed font-medium">
+              The premier governing body of Karate in Pakistan. Forging champions with discipline, honor, and national pride since 1965.
             </p>
           </div>
 
-          {/* Quick Links */}
+          {/* Quick Navigation */}
           <div>
-            <h3 className="font-semibold mb-4 text-white">Quick Links</h3>
-            <ul className="space-y-2 text-white/80 text-sm">
-              <li><a href="/#events" className="hover:text-[#00ff66] transition-colors">Events</a></li>
-              <li><a href="/events" className="hover:text-[#00ff66] transition-colors">All Events</a></li>
-              <li><a href="/#rankings" className="hover:text-[#00ff66] transition-colors">Rankings</a></li>
-              <li><a href="/#legends" className="hover:text-[#00ff66] transition-colors">Legends</a></li>
-              <li><a href="/#contact-us" className="hover:text-[#00ff66] transition-colors">Contact</a></li>
+            <h3 className="text-[10px] font-black uppercase tracking-[0.3em] text-green-400 mb-6 underline decoration-green-400/30 underline-offset-8">Navigation</h3>
+            <ul className="space-y-3 text-white/80 text-xs font-bold uppercase tracking-widest">
+              <li><a href="#events" className="hover:text-green-400 transition-all hover:translate-x-1 inline-block">Championships</a></li>
+              <li><a href="#rankings" className="hover:text-green-400 transition-all hover:translate-x-1 inline-block">Global Rankings</a></li>
+              <li><a href="#faq" className="hover:text-green-400 transition-all hover:translate-x-1 inline-block">Knowledge Base</a></li>
+              <li><a href="#contact-us" className="hover:text-green-400 transition-all hover:translate-x-1 inline-block">Support Portal</a></li>
             </ul>
           </div>
 
-          {/* Social Links */}
+          {/* Social Glass Tiles */}
           <div>
-            <h3 className="font-semibold mb-4 text-white">Follow Us</h3>
-            <div className="flex gap-4">
-              <motion.a
-                whileHover={{ scale: 1.2 }}
-                href="https://www.instagram.com/pakistan_karate_federation?igsh=MWtjb25tN2x2c3M0bA=="
-                target="_blank" rel="noreferrer"
-                className="p-3 bg-white/10 rounded-full hover:bg-white/20 transition"
-              >
-                <FaInstagram className="text-[#fff]" size={20} />
-              </motion.a>
-              <motion.a
-                whileHover={{ scale: 1.2 }}
-                href="https://www.facebook.com/share/18RLt3uLrp/?mibextid=wwXIfr"
-                target="_blank" rel="noreferrer"
-                className="p-3 bg-white/10 rounded-full hover:bg-white/20 transition"
-              >
-                <FaFacebookF className="text-[#fff]" size={20} />
-              </motion.a>
-              <motion.a
-                whileHover={{ scale: 1.2 }}
-                href="https://www.tiktok.com/@pakistan_karate_f?_r=1&_t=ZS-94dN3BPuDg2"
-                target="_blank" rel="noreferrer"
-                className="p-3 bg-white/10 rounded-full hover:bg-white/20 transition"
-              >
-                <FaTiktok className="text-[#fff]" size={20} />
-              </motion.a>
+            <h3 className="text-[10px] font-black uppercase tracking-[0.3em] text-green-400 mb-6 underline decoration-green-400/30 underline-offset-8">Digital Presence</h3>
+            <div className="flex gap-3">
+              {[
+                { icon: <FaInstagram />, link: "https://www.instagram.com/pakistan_karate_federation" },
+                { icon: <FaFacebookF />, link: "https://www.facebook.com/share/18RLt3uLrp/" },
+                { icon: <FaTiktok />, link: "https://www.tiktok.com/@pakistan_karate_f" }
+              ].map((social, i) => (
+                <motion.a
+                  key={i}
+                  whileHover={{ y: -5, backgroundColor: "rgba(255,255,255,0.2)" }}
+                  href={social.link}
+                  target="_blank"
+                  className="w-10 h-10 flex items-center justify-center bg-white/5 backdrop-blur-lg border border-white/10 rounded-sm text-white transition-all duration-300"
+                >
+                  {social.icon}
+                </motion.a>
+              ))}
             </div>
           </div>
 
-          {/* Office Location */}
+          {/* HQ Location Block */}
           <div>
-            <h3 className="font-semibold mb-4 text-white">Our Office</h3>
-            <div className="flex items-start gap-2">
-              <FaMapMarkerAlt className="mt-1 text-[#00ff66]" size={18} />
-              <p className="text-white/80 text-sm">
-                Olympic House 2, Hameed Nizami, Temple Rd, Mozang Chungi, Lahore, 54000
+            <h3 className="text-[10px] font-black uppercase tracking-[0.3em] text-green-400 mb-6 underline decoration-green-400/30 underline-offset-8">Headquarters</h3>
+            <div className="flex items-start gap-3 p-4 bg-white/5 backdrop-blur-xl border border-white/10 rounded-sm group hover:border-green-400/40 transition-colors">
+              <FaMapMarkerAlt className="mt-1 text-green-400 group-hover:scale-110 transition-transform" size={16} />
+              <p className="text-white/70 text-[11px] leading-relaxed font-bold uppercase tracking-tighter">
+                Olympic House 2, Hameed Nizami, Temple Rd, Lahore, 54000
               </p>
             </div>
           </div>
 
         </div>
 
-        {/* Bottom */}
-        <div className="mt-12 border-t border-white/20 pt-6 flex flex-col sm:flex-row justify-between items-center text-white/70 text-sm">
-          <span>&copy; {year} Pakistan Karate Federation. All rights reserved.</span>
-          <span>
-            Developed &amp; Designed by{" "}
+        {/* Minimal Bottom Bar */}
+        <div className="flex flex-col md:flex-row justify-between items-center gap-6">
+          <div className="text-[9px] font-black uppercase tracking-[0.4em] text-white/40">
+            © {year} Pakistan Karate Federation <span className="mx-2 opacity-20">|</span> Heritage & Power
+          </div>
+          
+          <div className="flex items-center gap-2 text-[9px] font-black uppercase tracking-widest text-white/40">
+            <span>Architected by</span>
             <a
               href="https://awaisweb.vercel.app/"
               target="_blank"
               rel="noreferrer"
-              className="text-[#00ff66] hover:underline transition"
+              className="text-white hover:text-green-400 transition-colors border-b border-green-400/50"
             >
               Muhammad Awais
             </a>
-          </span>
+          </div>
         </div>
 
       </div>

@@ -2,50 +2,51 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   RiArrowDownSLine, 
-  RiArrowUpSLine,
   RiQuestionMark,
   RiMailSendLine,
   RiCustomerService2Line,
   RiSearchLine,
-  RiThumbUpLine,
-  RiThumbDownLine
+  RiTrophyLine,
+  RiGlobalLine,
+  RiGroupLine,
+  RiFlashlightLine
 } from 'react-icons/ri';
 
 const faqs = [
   {
     question: "What is the Pakistan Karate Federation?",
-    answer: "The Pakistan Karate Federation (PKF) stands as the premier governing body for Karate in Pakistan, officially recognized by the Pakistan Sports Board and affiliated with international karate organizations including the World Karate Federation (WKF) and Asian Karate Federation (AKF). Since 1965, we have been dedicated to nurturing talent, preserving traditional martial arts values, and producing world-class athletes who represent Pakistan on global stages.",
+    answer: "The Pakistan Karate Federation (PKF) is the premier governing body for Karate in Pakistan, officially recognized by the Pakistan Sports Board. Since 1965, we have been dedicated to nurturing talent and producing world-class athletes for the global stage.",
     category: "general"
   },
   {
     question: "How can I join a training program?",
-    answer: "Joining our training programs is simple! You can either:\n\n• Visit one of our 50+ affiliated training centers nationwide\n• Register online through our 'Join the Dojo' portal\n• Contact our regional offices for personalized guidance\n\nWe offer trial classes for beginners and flexible scheduling options for working professionals and students.",
+    answer: "Joining is simple! You can visit one of our 50+ affiliated centers or register through our 'Join the Dojo' portal. We offer flexible scheduling for students and professionals.",
     category: "membership"
   },
   {
     question: "Are there age restrictions for training?",
-    answer: "Not at all! We believe karate is for everyone. Our programs are thoughtfully designed for various age groups including children, youth, adults, and seniors, tailored for fitness, self-defense, and competition.",
+    answer: "Karate is for everyone. Our programs are designed for all age groups—from children to seniors—focusing on fitness, self-defense, and discipline.",
     category: "training"
   },
   {
     question: "How can I participate in competitions?",
-    answer: "Competition participation follows a structured pathway. Athletes must train at an affiliated dojo, qualify through district/provincial championships, and get selected for national/international events based on performance.",
+    answer: "Athletes must train at an affiliated dojo and qualify through district and provincial championships to reach the national level.",
     category: "competition"
   },
   {
     question: "Do you offer international exposure?",
-    answer: "Yes! PKF provides extensive international exposure through events like Asian Games, World Karate Championships, South Asian Games, and bilateral exchange programs with foreign federations.",
+    answer: "Yes! PKF provides extensive exposure through the Asian Games, World Championships, and South Asian Games.",
     category: "international"
   }
 ];
 
 const categories = [
-  { id: 'all', label: 'All Questions', icon: <RiQuestionMark /> },
+  { id: 'all', label: 'All', icon: <RiFlashlightLine /> },
   { id: 'general', label: 'General', icon: <RiCustomerService2Line /> },
-  { id: 'membership', label: 'Membership', icon: <RiMailSendLine /> },
-  { id: 'training', label: 'Training', icon: <RiQuestionMark /> },
-  { id: 'competition', label: 'Competition', icon: <RiQuestionMark /> },
-  { id: 'international', label: 'International', icon: <RiQuestionMark /> }
+  { id: 'membership', label: 'Joining', icon: <RiMailSendLine /> },
+  { id: 'training', label: 'Training', icon: <RiGroupLine /> },
+  { id: 'competition', label: 'Events', icon: <RiTrophyLine /> },
+  { id: 'international', label: 'Global', icon: <RiGlobalLine /> }
 ];
 
 const FAQ = () => {
@@ -53,122 +54,139 @@ const FAQ = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
 
-  const toggleFAQ = (index) => {
-    setActiveIndex(activeIndex === index ? null : index);
-  };
-
   const filteredFAQs = faqs.filter(faq => {
-    const matchesSearch = faq.question.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                         faq.answer.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesSearch = faq.question.toLowerCase().includes(searchQuery.toLowerCase());
     const matchesCategory = selectedCategory === 'all' || faq.category === selectedCategory;
     return matchesSearch && matchesCategory;
   });
 
   return (
-    <section id="faq" className="relative w-full py-12 lg:py-16 bg-gray-50 dark:bg-black">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section id="faq" className="relative w-full py-24 lg:py-32 bg-white dark:bg-[#030303] overflow-hidden transition-colors duration-700">
+      
+      {/* ICY FLOW (Background Decor) */}
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-[1px] bg-gradient-to-r from-transparent via-[#008000]/30 to-transparent" />
+      <div className="absolute top-40 -right-20 w-96 h-96 bg-[#008000]/5 blur-[120px] rounded-full pointer-events-none" />
+
+      <div className="max-w-5xl mx-auto px-6 relative z-10">
+        
         {/* Header */}
-        <div className="text-center mb-8">
-          <span className="inline-block px-3 py-1.5 bg-[#008000]/10 rounded-full text-[#008000] text-sm font-semibold mb-3">
-            FAQ
-          </span>
-          <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white mb-2">
-            Frequently Asked <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#008000] to-[#00ff00]">Questions</span>
+        <div className="text-center mb-16">
+          <motion.div 
+            initial={{ opacity: 0, y: 10 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            className="inline-block px-4 py-1 rounded-full bg-[#008000]/10 border border-[#008000]/20 text-[#008000] text-[10px] font-black uppercase tracking-[0.4em] mb-4"
+          >
+            Knowledge Base
+          </motion.div>
+          <h2 className="text-4xl md:text-6xl font-black text-gray-900 dark:text-white uppercase tracking-tighter mb-4">
+            Common <span className="text-[#008000]">Inquiries</span>
           </h2>
-          <p className="text-gray-600 dark:text-gray-300 text-sm max-w-xl mx-auto">
-            Everything you need to know about PKF.
+          <p className="text-gray-500 dark:text-gray-400 text-sm max-w-lg mx-auto font-medium">
+            Find everything you need to know about the legacy and operations of PKF.
           </p>
         </div>
 
-        {/* Search & Categories */}
-        <div className="mb-10 space-y-4">
-          <div className="relative max-w-md mx-auto">
-            <RiSearchLine className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 text-xl" />
+        {/* Search & Categories (Icy Style) */}
+        <div className="mb-12 space-y-6">
+          <div className="relative max-w-xl mx-auto group">
+            <RiSearchLine className="absolute left-5 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-[#008000] transition-colors" />
             <input
               type="text"
-              placeholder="Search your question..."
+              placeholder="Search for a topic..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-12 pr-4 py-3 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#008000]/50 focus:border-[#008000] text-gray-900 dark:text-white placeholder-gray-400"
+              className="w-full pl-14 pr-6 py-4 bg-gray-50 dark:bg-white/[0.02] backdrop-blur-md border border-black/5 dark:border-white/10 text-sm outline-none focus:border-[#008000]/50 transition-all dark:text-white placeholder:text-gray-400"
             />
           </div>
 
-          <div className="flex flex-wrap justify-center gap-2">
-            {categories.map(category => (
+          <div className="flex flex-wrap justify-center gap-3">
+            {categories.map(cat => (
               <button
-                key={category.id}
-                onClick={() => setSelectedCategory(category.id)}
-                className={`px-4 py-2 rounded-lg flex items-center gap-2 transition-all duration-300 ${
-                  selectedCategory === category.id
-                    ? 'bg-[#008000] text-white'
-                    : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-[#008000]/10'
+                key={cat.id}
+                onClick={() => setSelectedCategory(cat.id)}
+                className={`px-5 py-2 rounded-sm flex items-center gap-2 text-[10px] font-black uppercase tracking-widest transition-all duration-500 ${
+                  selectedCategory === cat.id
+                    ? 'bg-[#008000] text-white shadow-lg shadow-green-900/20'
+                    : 'bg-white dark:bg-white/5 text-gray-500 dark:text-gray-400 border border-black/5 dark:border-white/5 hover:border-[#008000]/30'
                 }`}
               >
-                <span className="text-lg">{category.icon}</span>
-                <span className="text-sm font-medium">{category.label}</span>
+                {cat.icon} {cat.label}
               </button>
             ))}
           </div>
         </div>
 
-        {/* FAQ Items */}
-        <div className="space-y-4">
-          <AnimatePresence>
-            {filteredFAQs.length > 0 ? filteredFAQs.map((faq, index) => (
+        {/* FAQ Items (Glassy Blocks) */}
+        <div className="grid gap-4">
+          <AnimatePresence mode="popLayout">
+            {filteredFAQs.map((faq, index) => (
               <motion.div
-                key={index}
+                key={faq.question}
                 layout
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -20 }}
-                className={`group relative bg-white dark:bg-gray-800 rounded-2xl shadow-lg overflow-hidden ${activeIndex === index ? 'ring-2 ring-[#008000] ring-opacity-50' : ''}`}
+                exit={{ opacity: 0, scale: 0.95 }}
+                className={`group border-l-4 transition-all duration-500 ${
+                  activeIndex === index 
+                  ? 'bg-white dark:bg-white/[0.04] border-[#008000] shadow-xl' 
+                  : 'bg-gray-50 dark:bg-white/[0.01] border-transparent hover:border-gray-300 dark:hover:border-white/10'
+                }`}
               >
                 <button
-                  onClick={() => toggleFAQ(index)}
-                  className="w-full flex items-center justify-between p-6 text-left focus:outline-none"
+                  onClick={() => setActiveIndex(activeIndex === index ? null : index)}
+                  className="w-full flex items-center justify-between p-6 text-left outline-none"
                 >
-                  <div className="flex items-center gap-4 flex-1">
-                    <div className={`w-10 h-10 rounded-full flex items-center justify-center border-2 ${activeIndex === index ? 'border-[#008000] bg-[#008000] text-white' : 'border-gray-300 dark:border-gray-600 text-gray-500 dark:text-gray-400'}`}>
-                      <RiQuestionMark />
-                    </div>
-                    <div className="flex-1">
-                      <h3 className="font-semibold text-gray-900 dark:text-white text-lg">{faq.question}</h3>
-                      <span className="inline-block mt-1 text-xs text-[#008000] bg-[#008000]/10 px-2 py-1 rounded-full">{faq.category}</span>
-                    </div>
+                  <div className="flex items-center gap-5">
+                    <span className={`text-xs font-black transition-colors ${activeIndex === index ? 'text-[#008000]' : 'text-gray-400'}`}>
+                      {String(index + 1).padStart(2, '0')}
+                    </span>
+                    <h3 className="font-bold text-gray-900 dark:text-white uppercase tracking-tight text-sm md:text-base">
+                      {faq.question}
+                    </h3>
                   </div>
-                  <div className={`text-2xl ${activeIndex === index ? 'text-[#008000]' : 'text-gray-400'}`}>
-                    {activeIndex === index ? <RiArrowUpSLine /> : <RiArrowDownSLine />}
-                  </div>
+                  <motion.div 
+                    animate={{ rotate: activeIndex === index ? 180 : 0 }}
+                    className={`text-xl ${activeIndex === index ? 'text-[#008000]' : 'text-gray-400'}`}
+                  >
+                    <RiArrowDownSLine />
+                  </motion.div>
                 </button>
 
                 <AnimatePresence>
                   {activeIndex === index && (
                     <motion.div
-                      initial={{ opacity: 0, height: 0 }}
-                      animate={{ opacity: 1, height: 'auto' }}
-                      exit={{ opacity: 0, height: 0 }}
-                      className="overflow-hidden px-6 pb-6 pl-20"
+                      initial={{ height: 0, opacity: 0 }}
+                      animate={{ height: 'auto', opacity: 1 }}
+                      exit={{ height: 0, opacity: 0 }}
+                      className="overflow-hidden"
                     >
-                      <div className="prose prose-sm sm:prose dark:prose-invert max-w-none">
-                        {faq.answer.split('\n').map((line, i) => (
-                          <p key={i} className="text-gray-700 dark:text-gray-300 leading-relaxed whitespace-pre-line">{line}</p>
-                        ))}
-                      </div>
-                      <div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700 flex items-center justify-between">
-                        <span className="text-sm text-gray-500 dark:text-gray-400">Was this helpful?</span>
-                        <div className="flex gap-2">
-                          <button className="p-2 rounded-lg bg-gray-100 dark:bg-gray-700 hover:bg-[#008000]/10 transition-colors"><RiThumbUpLine /></button>
-                          <button className="p-2 rounded-lg bg-gray-100 dark:bg-gray-700 hover:bg-[#008000]/10 transition-colors"><RiThumbDownLine /></button>
+                      <div className="px-16 pb-8 pt-2">
+                        <p className="text-gray-600 dark:text-gray-400 text-sm leading-relaxed max-w-3xl">
+                          {faq.answer}
+                        </p>
+                        <div className="mt-6 flex items-center gap-2">
+                           <span className="text-[9px] font-black uppercase tracking-widest text-[#008000] bg-[#008000]/10 px-3 py-1">
+                             {faq.category}
+                           </span>
                         </div>
                       </div>
                     </motion.div>
                   )}
                 </AnimatePresence>
               </motion.div>
-            )) : (
-              <div className="text-center py-12 text-gray-600 dark:text-gray-400">No questions found</div>
-            )}
+            ))}
           </AnimatePresence>
+        </div>
+
+        {/* Support Footer */}
+        <div className="mt-20 text-center">
+          <p className="text-gray-400 text-[10px] font-bold uppercase tracking-[0.4em] mb-4">Still have questions?</p>
+          <a 
+            href="#contact-us"
+            className="inline-flex items-center gap-3 text-black dark:text-white font-black uppercase tracking-widest text-[11px] border-b-2 border-[#008000] pb-2 hover:gap-6 transition-all"
+          >
+            Contact Support Office <RiMailSendLine className="text-[#008000] text-lg" />
+          </a>
         </div>
       </div>
     </section>
