@@ -12,13 +12,12 @@ const Navbar = ({ theme, setTheme }) => {
   const location = useLocation();
   const navigate = useNavigate();
 
-  // Updated Links: Removed emojis, kept structure for SVGs
   const navLinks = [
     { name: "Home", path: "/", type: "home" },
-    { name: "About", path: "/", hash: "#about-us" },
+    { name: "About", path: "/", hash: "about-us" }, // Removed # for cleaner logic
     { name: "Events", path: "/events" },
     { name: "Rankings", path: "/rankings" },
-    { name: "Contact", path: "/", hash: "#contact-us" },
+    { name: "Contact", path: "/", hash: "contact-us" }, // Removed #
   ];
 
   useEffect(() => {
@@ -26,6 +25,19 @@ const Navbar = ({ theme, setTheme }) => {
     window.addEventListener("scroll", onScroll);
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
+
+  // --- FIX: Scroll to Hash after Navigation ---
+  useEffect(() => {
+    if (location.hash) {
+      const id = location.hash.replace("#", "");
+      const element = document.getElementById(id);
+      if (element) {
+        setTimeout(() => {
+          element.scrollIntoView({ behavior: "smooth" });
+        }, 100); // Small delay for rendering
+      }
+    }
+  }, [location]);
 
   useEffect(() => {
     if (!sidebarOpen) return;
@@ -40,22 +52,27 @@ const Navbar = ({ theme, setTheme }) => {
 
   const handleNavClick = (link) => {
     setSidebarOpen(false);
+    
     if (link.type === "home") {
       navigate("/");
       window.scrollTo({ top: 0, behavior: "smooth" });
     } else if (link.hash) {
+      // Direct scroll if already on home, otherwise navigate with hash
       if (location.pathname === "/") {
-        const el = document.getElementById(link.hash.replace("#", ""));
+        const el = document.getElementById(link.hash);
         el?.scrollIntoView({ behavior: "smooth" });
       } else {
-        navigate(`/${link.hash}`);
+        navigate(`/#${link.hash}`);
       }
     } else {
       navigate(link.path);
     }
   };
 
-  const isActive = (link) => link.path && location.pathname === link.path;
+  const isActive = (link) => {
+    if (link.hash) return location.hash === `#${link.hash}`;
+    return location.pathname === link.path && !location.hash;
+  };
 
   return (
     <div className="fixed top-0 left-0 right-0 z-50 flex justify-center p-4 transition-all duration-500">
@@ -113,7 +130,8 @@ const Navbar = ({ theme, setTheme }) => {
           <motion.button
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
-            onClick={() => navigate('/#contact-us')}
+            // FIXED: Trigger handleNavClick for the Connect button too
+            onClick={() => handleNavClick({hash: 'contact-us'})}
             className="hidden sm:block px-5 py-2 text-sm font-semibold text-white bg-green-600 rounded-xl hover:bg-green-500 transition-colors shadow-lg shadow-green-500/20"
           >
             Connect
@@ -163,14 +181,18 @@ const Navbar = ({ theme, setTheme }) => {
                         animate={{ opacity: 1, x: 0 }}
                         transition={{ delay: i * 0.1 }}
                         onClick={() => handleNavClick(link)}
-                        className="text-left text-2xl font-semibold hover:text-green-500 transition-colors py-2 border-b border-gray-100 dark:border-white/5"
+                        className={`text-left text-2xl font-semibold transition-colors py-2 border-b border-gray-100 dark:border-white/5
+                        ${isActive(link) ? "text-green-500" : "text-black dark:text-white"}`}
                       >
                         {link.name}
                       </motion.button>
                     ))}
                   </nav>
 
-                  <button className="mt-4 w-full py-4 bg-green-600 text-white rounded-2xl font-bold shadow-xl shadow-green-500/20">
+                  <button 
+                    onClick={() => handleNavClick({hash: 'contact-us'})}
+                    className="mt-4 w-full py-4 bg-green-600 text-white rounded-2xl font-bold shadow-xl shadow-green-500/20"
+                  >
                     Get Started
                   </button>
                 </div>
