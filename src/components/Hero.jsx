@@ -1,167 +1,104 @@
-import React, { useEffect, useRef } from 'react';
-import { motion, useAnimation } from 'framer-motion';
+import React from 'react';
+import { motion } from 'framer-motion';
 import HeroImage from '../assets/Home_Image.jpg';
 import assets from '../assets/assets';
 
-const Hero = () => {
-  const controls = useAnimation();
-  const scrollRef = useRef(null);
-
-  useEffect(() => {
-    const animateParticles = () => {
-      const particles = document.querySelectorAll('.particle');
-      particles.forEach((p) => {
-        const x = Math.random() * window.innerWidth;
-        const y = Math.random() * window.innerHeight;
-        p.style.transform = `translate(${x}px, ${y}px)`;
-      });
-    };
-    const interval = setInterval(animateParticles, 3000);
-    return () => clearInterval(interval);
-  }, []);
-
+const Hero = ({ theme }) => {
   return (
-    <section className="relative w-full min-h-screen flex flex-col justify-center items-center text-center overflow-hidden bg-black">
+    <section className="relative w-full min-h-screen flex items-center justify-center bg-[#fafafa] dark:bg-[#080808] transition-colors duration-500 overflow-hidden">
       
-      {/* Background Hero Image */}
-      <motion.img
-        src={HeroImage}
-        alt="Hero Background"
-        loading="lazy"
-        initial={{ scale: 1.1 }}
-        animate={{ scale: 1 }}
-        transition={{ duration: 12, ease: "easeOut" }}
-        className="absolute top-0 left-0 w-full h-full object-cover z-0"
-      />
-
-      {/* Particle/Light Streaks */}
-      {[...Array(20)].map((_, i) => (
-        <div key={i} className="particle absolute w-1 h-1 rounded-full bg-[#008000] opacity-40 blur-md" />
-      ))}
-
-      {/* Dark Gradient Overlay */}
-      <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-b from-black/20 via-black/10 to-black/70 z-10" />
-
-      {/* Content */}
-      <div className="relative z-20 max-w-6xl px-6 sm:px-12 flex flex-col items-center">
-
-        {/* Tagline */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1 }}
-          className="mb-6"
-        >
-          <span className="inline-block px-5 py-3 bg-white/10 backdrop-blur-md rounded-full text-white font-semibold tracking-wider border border-white/20 animate-pulse">
-            ⚡ ESTABLISHED 1965
-          </span>
-        </motion.div>
-
-        {/* Heading */}
-        <motion.h1
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1.2, delay: 0.3 }}
-          className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold text-white mb-6 leading-tight"
-        >
-          <span>The Pakistan</span> <br />
-          <span className="text-[#008000] drop-shadow-lg">Karate Federation</span>
-        </motion.h1>
-
-        {/* Description */}
-        <motion.p
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1, delay: 0.6 }}
-          className="text-white/90 mt-4 text-lg sm:text-xl max-w-3xl mx-auto leading-relaxed font-light"
-        >
-          Experience the power, discipline, and thrill of 
-          <span className="text-[#008000] font-semibold"> Pakistan's premier</span> 
-          martial arts championships.
-        </motion.p>
-
-        {/* Stats */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 1.2, delay: 0.9 }}
-          className="flex flex-wrap justify-center gap-8 mt-10"
-        >
-          {[
-            { number: '5000+', label: 'Active Members' },
-            { number: '50+', label: 'Training Centers' },
-            { number: '100+', label: 'Annual Events' }
-          ].map((stat, idx) => (
-            <motion.div 
-              key={idx} 
-              initial={{ y: 20, opacity: 0 }}
-              animate={{ y: 0, opacity: 1 }}
-              transition={{ duration: 1, delay: 0.2 * idx }}
-              className="text-center"
-            >
-              <div className="text-3xl sm:text-4xl md:text-5xl font-bold text-[#008000] drop-shadow-lg animate-pulse">{stat.number}</div>
-              <div className="text-white/60 text-sm sm:text-base tracking-wider">{stat.label}</div>
-            </motion.div>
-          ))}
-        </motion.div>
-
-        {/* Buttons */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1, delay: 1.3 }}
-          className="flex flex-col sm:flex-row gap-4 sm:gap-6 justify-center items-center mt-12"
-        >
-          <a
-            href="#events"
-            className="w-full sm:w-auto px-8 py-3 bg-[#008000] text-white rounded-full font-semibold text-lg transition hover:scale-105 hover:shadow-xl shadow-[#008000]/50"
-          >
-            View Championships
-          </a>
-          <a
-            href="/events"
-            className="w-full sm:w-auto px-8 py-3 bg-transparent border-2 border-white/30 text-white rounded-full font-semibold text-lg transition hover:border-[#008000] hover:text-[#008000] backdrop-blur-sm"
-          >
-            Join the Dojo
-          </a>
-        </motion.div>
-
-        {/* Karate Image Hero */}
-        <motion.div
-          initial={{ opacity: 0, y: 50 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1.5, delay: 1.6 }}
-          className="mt-16 w-full max-w-5xl relative"
-        >
-          <div className="relative rounded-3xl overflow-hidden shadow-2xl transform hover:scale-[1.02] transition-all duration-500">
-            <img
-              src={assets.Karate_Image} // <- your AI generated karate image
-              alt="Karate Practitioners"
-              loading="lazy"
-              className="w-full h-auto object-cover"
-            />
-            <div className="absolute inset-0 bg-gradient-to-tr from-[#008000]/20 to-transparent mix-blend-overlay" />
-          </div>
-        </motion.div>
-
-        {/* Scroll Indicator */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 1, delay: 2.2 }}
-          className="absolute bottom-6 left-1/2 transform -translate-x-1/2 flex flex-col items-center gap-1"
-        >
-          <span className="text-white/50 text-sm tracking-wider uppercase">Scroll Down</span>
-          <div className="w-5 h-10 border-2 border-white/30 rounded-full flex justify-center">
-            <motion.div
-              animate={{ y: [0, 12, 0] }}
-              transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
-              className="w-1 h-3 bg-[#008000] rounded-full mt-2"
-            />
-          </div>
-        </motion.div>
-
+      {/* BACKGROUND WATERMARK - Subtle & Professional */}
+      <div className="absolute inset-0 flex items-center justify-center opacity-[0.02] dark:opacity-[0.04] pointer-events-none select-none">
+        <h2 className="text-[22vw] font-black tracking-tighter uppercase">Pakistan</h2>
       </div>
+
+      <div className="container mx-auto px-6 lg:px-12 relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16 items-center py-20 lg:py-0">
+        
+        {/* LEFT CONTENT: Balanced & Readable */}
+        <div className="lg:col-span-7 flex flex-col justify-center text-center lg:text-left order-2 lg:order-1">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+          >
+            <div className="flex items-center justify-center lg:justify-start gap-3 mb-6">
+              <div className="h-[2px] w-8 bg-green-700 dark:bg-green-500" />
+              <span className="text-[10px] md:text-xs font-bold uppercase tracking-[0.4em] text-gray-500 dark:text-gray-400">
+                Official Karate Federation
+              </span>
+            </div>
+
+            {/* Adjusted Font Sizes for Responsiveness */}
+            <h1 className="text-4xl md:text-6xl lg:text-7xl xl:text-8xl font-black text-black dark:text-white leading-[1.1] tracking-tight uppercase">
+              The Path of <br />
+              <span className="text-green-700 dark:text-green-500">Excellence</span>
+            </h1>
+
+            <p className="mt-6 max-w-xl mx-auto lg:mx-0 text-base md:text-lg text-gray-600 dark:text-gray-400 font-medium leading-relaxed">
+              Experience the fusion of traditional values and modern athletic power. 
+              Join the legacy that has been forging champions since 1965.
+            </p>
+
+            {/* Professional Buttons */}
+            <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4 mt-10">
+              <button className="w-full sm:w-auto px-10 py-4 bg-black dark:bg-green-700 text-white font-bold uppercase tracking-widest text-[11px] rounded-sm hover:bg-green-800 dark:hover:bg-green-600 transition-all duration-300 shadow-lg">
+                View Tournaments
+              </button>
+              <button className="w-full sm:w-auto px-10 py-4 border border-black/20 dark:border-white/20 text-black dark:text-white font-bold uppercase tracking-widest text-[11px] rounded-sm hover:bg-black hover:text-white dark:hover:bg-white dark:hover:text-black transition-all duration-300">
+                Membership Info
+              </button>
+            </div>
+          </motion.div>
+        </div>
+
+        {/* RIGHT IMAGE: High-End Frame */}
+        <motion.div
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 1 }}
+          className="lg:col-span-5 relative order-1 lg:order-2"
+        >
+          <div className="relative mx-auto w-[85%] md:w-[70%] lg:w-full">
+            {/* The Frame Overlay */}
+            <div className="absolute -inset-4 border border-gray-200 dark:border-white/5 -z-10" />
+            
+            <div className="aspect-[4/5] overflow-hidden border border-black/10 dark:border-white/10 shadow-2xl">
+              <motion.img 
+                src={HeroImage} 
+                className="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-1000 ease-in-out cursor-pointer" 
+                alt="Karate Excellence"
+                whileHover={{ scale: 1.05 }}
+              />
+            </div>
+
+            {/* Subtle Corner Accents */}
+            <div className="absolute -top-2 -right-2 w-16 h-16 border-t-4 border-r-4 border-green-700 dark:border-green-600" />
+            <div className="absolute -bottom-2 -left-2 w-16 h-16 border-b-4 border-l-4 border-green-700 dark:border-green-600" />
+            
+            {/* Minimal Info Badge */}
+            <div className="absolute -right-6 bottom-12 bg-black dark:bg-green-700 text-white px-4 py-2 text-[10px] font-bold uppercase tracking-widest -rotate-90 origin-right">
+              Est. 1965
+            </div>
+          </div>
+        </motion.div>
+      </div>
+
+      {/* REFINED STATS: Professional Minimalist */}
+      <div className="absolute bottom-0 w-full bg-white dark:bg-[#111] border-t border-black/5 dark:border-white/5 py-6 hidden md:block">
+        <div className="max-w-7xl mx-auto px-6 flex justify-around">
+          {[
+            { n: '5000+', l: 'Registered Athletes' },
+            { n: '50+', l: 'Training Centers' },
+            { n: '100+', l: 'Annual Championships' }
+          ].map((s, i) => (
+            <div key={i} className="text-center group">
+              <span className="block text-2xl font-black text-black dark:text-white group-hover:text-green-700 transition-colors">{s.n}</span>
+              <span className="text-[10px] text-gray-400 font-bold uppercase tracking-[0.2em]">{s.l}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+
     </section>
   );
 };
