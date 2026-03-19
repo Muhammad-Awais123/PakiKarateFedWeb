@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react'
-import { BrowserRouter, Routes, Route } from "react-router-dom"
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom"
 
 // Admin
 import AdminLogin from "./components/admin/AdminLogin"
@@ -7,6 +7,11 @@ import AdminLayout from "./components/admin/AdminLayout"
 import EventsManagement from "./components/admin/EventsManagement"
 import RankingsManagement from "./components/admin/RankingsManagement"
 import RegistrationsManagement from "./components/admin/RegistrationsManagement"
+import PrivateRoute from "./components/admin/PrivateRoute"
+import PlayersManagement from "./components/admin/PlayersManagement"
+import CoachesManagement from "./components/admin/CoachesManagement"
+import LegendsManagement from "./components/admin/LegendsManagement"
+import ScheduleManagement from "./components/admin/ScheduleManagement"
 
 // Public
 import AboutUs from './components/AboutUs'
@@ -21,8 +26,18 @@ import EventDetail from './pages/EventDetail'
 import { Toaster } from 'react-hot-toast'
 import FAQ from './components/FAQs'
 import Legends from './components/Legends'
+import PublicLayout from "./components/PublicLayout"
+import EventsPage from "./pages/Events"
+import Schedule from "./pages/Schedule"
+import Rankings from "./pages/Rankings"
+import Players from "./pages/Players"
+import Coaches from "./pages/Coaches"
+import LegendsPage from "./pages/Legends"
+import DashboardOverview from "./pages/admin/DashboardOverview"
 
 const App = () => {
+  const adminPath = import.meta.env.VITE_ADMIN_PATH || "/admin/login";
+
   const [theme, setTheme] = useState(localStorage.getItem('theme') || 'light')
 
   const dotRef = useRef(null)
@@ -77,55 +92,63 @@ const App = () => {
   return (
     <BrowserRouter>
       <Toaster />
-      <div className='dark:bg-black relative'>
-        <Navbar theme={theme} setTheme={setTheme} />
-
-        <Routes>
-          {/* Admin Routes */}
-          <Route path="/admin/login" element={<AdminLogin />} />
+      <Routes>
+        {/* Admin Panel (separate chrome) */}
+        <Route
+          path={adminPath}
+          element={
+            localStorage.getItem("adminToken")
+              ? <Navigate to="/admin/dashboard/events" replace />
+              : <AdminLogin />
+          }
+        />
+        <Route element={<PrivateRoute />}>
           <Route path="/admin/dashboard" element={<AdminLayout />}>
+            <Route index element={<DashboardOverview />} />
             <Route path="events" element={<EventsManagement />} />
             <Route path="rankings" element={<RankingsManagement />} />
             <Route path="registrations" element={<RegistrationsManagement />} />
+            <Route path="players" element={<PlayersManagement />} />
+            <Route path="coaches" element={<CoachesManagement />} />
+            <Route path="legends" element={<LegendsManagement />} />
+            <Route path="schedule" element={<ScheduleManagement />} />
           </Route>
+        </Route>
 
-          {/* Public Routes */}
+        {/* User/Public Panel (website chrome) */}
+        <Route
+          element={
+            <PublicLayout
+              theme={theme}
+              setTheme={setTheme}
+              dotRef={dotRef}
+              outlineRef={outlineRef}
+            />
+          }
+        >
+          <Route path="/events" element={<EventsPage />} />
           <Route path="/events/:id" element={<EventDetail />} />
-          <Route path="/" element={
-            <>
-              <Hero />
-              <AboutUs />
-              <Events />
-              <WorldRankings />
-              <Legends/>
-              <FAQ/>
-              <ContactUs />
-            </>
-          } />
-        </Routes>
-
-        <Footer theme={theme} />
-
-        {/* Custom Cursor Outline */}
-        <div
-          ref={outlineRef}
-          className='fixed top-0 left-0 h-10 w-10 rounded-full border pointer-events-none z-[9999]'
-          style={{
-            borderColor: theme === 'dark' ? '#00ff00' : '#008000',
-            transition: 'border-color 0.2s, transform 0.1s ease-out',
-          }}
-        ></div>
-
-        {/* Custom Cursor Dot */}
-        <div
-          ref={dotRef}
-          className='fixed top-0 left-0 h-3 w-3 rounded-full pointer-events-none z-[9999]'
-          style={{
-            backgroundColor: theme === 'dark' ? '#00ff00' : '#008000',
-            transition: 'background-color 0.2s, transform 0.1s ease-out',
-          }}
-        ></div>
-      </div>
+          <Route path="/schedule" element={<Schedule />} />
+          <Route path="/rankings" element={<Rankings />} />
+          <Route path="/players" element={<Players />} />
+          <Route path="/coaches" element={<Coaches />} />
+          <Route path="/legends" element={<LegendsPage />} />
+          <Route
+            path="/"
+            element={
+              <>
+                <Hero />
+                <AboutUs />
+                <Events />
+                <WorldRankings />
+                <Legends />
+                <FAQ />
+                <ContactUs />
+              </>
+            }
+          />
+        </Route>
+      </Routes>
     </BrowserRouter>
   )
 }

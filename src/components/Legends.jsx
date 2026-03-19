@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   RiMedalLine,
@@ -9,15 +9,78 @@ import {
   RiCalendarLine,
   RiArrowRightSLine,
 } from "react-icons/ri";
-import assets from "../assets/assets";
+import axiosInstance from "../utils/axiosConfig";
 
-// Legends data
-const legends = [
-  { id: 1, name: "Kulsoom Hazara", title: "South Asian Gold Medalist", honor: "Pride of Pakistan Awarded By ISPR", era: "2005-2021", social: "@kulsoomhazara", gender: "female", image: assets.kulsoom, stats: { gold: 7, silver: 4, bronze: 2, international: 25 }, achievements: ["01 Gold & 01 Silver at 13th South Asian Games - Kathmandu Nepal, 2019","01 Gold & 01 Silver at 4th South Asian karate championship - Colombo Srilanka, 2017"], participations: ["5th Islamic Solidarity Games Konya 2021","15th AKF Senior Championship - Jordan, 2018"], category: "athlete" },
-  { id: 2, name: "Muhammad Kashif Aslam", title: "South Asian Gold Medalist", honor: "WKF Qualified Coach", era: "2023-2024", social: "", gender: "male", image: assets.kashif, stats: { gold: 2, silver: 0, bronze: 1, international: 8 }, achievements: ["01 Gold Medal at 6th South Asian Karate Championship Colombo, Srilanka 2021"], participations: ["WKF Coaches Course 2022 Konya","18th AKF Championship 2022"], category: "coach" },
-  { id: 3, name: "Beenish Akbar", title: "South Asian Gold Medalist", honor: "Ex-Coach Pakistan Female Karate Team", era: "2006-2018", social: "", gender: "female", image: assets.benish, stats: { gold: 2, silver: 4, bronze: 1, international: 7 }, achievements: ["02 Gold & 01 Bronze at 1st South Asian Karate Championship 2011"], participations: ["12th Asian Karate Championship 2012 in Uzbekistan"], category: "athlete" },
-  { id: 4, name: "Ghulam Ali Hazara", title: "South Asian Gold Medalist", honor: "National Champion 1997-2010", era: "1997-2010", social: "", gender: "male", image: assets.ghulam, stats: { gold: 4, silver: 1, bronze: 0, international: 10 }, achievements: ["02 Gold at 9th South Asian Games 2004 Islamabad"], participations: ["15th Asian Games 2006 in Doha, Qatar"], category: "coach" },
-];
+const API_ORIGIN =
+  import.meta.env.VITE_API_ORIGIN ||
+  (typeof window !== "undefined" &&
+  window.location?.origin?.includes("localhost")
+    ? "http://localhost:5000"
+    : "");
+
+function photoUrl(photo) {
+  if (!photo) return "";
+  if (String(photo).startsWith("http")) return photo;
+  if (API_ORIGIN && String(photo).startsWith("/")) return `${API_ORIGIN}${photo}`;
+  return photo;
+}
+
+function deriveCategory(legend) {
+  const text = `${legend?.bio || ""} ${legend?.notableTitles || ""}`.toLowerCase();
+  if (
+    text.includes("coach") ||
+    text.includes("trainer") ||
+    text.includes("instructor")
+  ) {
+    return "coach";
+  }
+  return "athlete";
+}
+
+function normalizeLegend(doc) {
+  const achievements = Array.isArray(doc?.achievements) ? doc.achievements : [];
+
+  const lcAchievements = achievements.map((a) => String(a).toLowerCase());
+  const countKeyword = (kw) =>
+    lcAchievements.reduce((acc, cur) => (cur.includes(kw) ? acc + 1 : acc), 0);
+
+  // Backend legend model doesn't have explicit medal counters, so we infer them
+  // from the text content of `achievements` for better UI consistency.
+  const gold = countKeyword("gold");
+  const silver = countKeyword("silver");
+  const bronze = countKeyword("bronze");
+  const international = lcAchievements.reduce((acc, cur) => {
+    // Treat "international" and "event" as a proxy for global appearances.
+    const hit = cur.includes("international") || cur.includes("event") || cur.includes("championship");
+    return hit ? acc + 1 : acc;
+  }, 0);
+
+  // Existing UI expects: { id, name, image, title, honor, era, stats, achievements, participations, social, category }
+  // Backend Legend schema is smaller, so we safely derive what we can.
+  return {
+    id: doc?._id ?? doc?.id,
+    name: doc?.name ?? "—",
+    image: photoUrl(doc?.photo) || "",
+    era: doc?.yearsActive || "",
+    title: doc?.notableTitles || doc?.bio || "",
+    honor: doc?.notableTitles || "",
+    category: deriveCategory(doc),
+    achievements,
+    participations: Array.isArray(doc?.participations)
+      ? doc.participations
+      : doc?.bio
+        ? [doc.bio]
+        : [],
+    social: doc?.social || "",
+    stats: {
+      gold,
+      silver,
+      bronze,
+      // Use achievements count as a fallback so the UI doesn't break.
+      international: international || achievements.length,
+    },
+  };
+}
 
 // Motion list
 const MotionList = ({ items, direction = "left" }) => (
@@ -36,51 +99,88 @@ const MotionList = ({ items, direction = "left" }) => (
   </div>
 );
 
-// Legend Card
-const LegendCard = ({ legend, isActive, onClick }) => {
-  const cardBg = "bg-white dark:bg-gray-900 text-gray-900 dark:text-white";
-
+// Legend Card — Golden Hall of Fame style
+const LegendCard = ({ legend, onClick }) => {
   return (
     <motion.div
-      layout
-      whileHover={{ scale: 1.03 }}
-      initial={{ opacity: 0, y: 15 }}
+      whileHover={{ scale: 1.02, y: -4 }}
+      initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, scale: 0.95 }}
-      className={`group cursor-pointer rounded-xl overflow-hidden shadow-lg border border-gray-200 dark:border-gray-700 ${isActive ? "lg:col-span-2" : ""}`}
+      exit={{ opacity: 0, scale: 0.98 }}
+      transition={{ duration: 0.3 }}
+      className="group cursor-pointer rounded-2xl overflow-hidden shadow-xl border border-emerald-200 dark:border-emerald-900/40 hover:border-emerald-400/60 dark:hover:border-emerald-700/60 hover:shadow-emerald-500/10 hover:shadow-2xl transition-all duration-300"
       onClick={onClick}
     >
-      <div className={`${cardBg} flex flex-col h-full transition-colors duration-300`}>
-        <div className="w-full h-40 md:h-48 lg:h-52 overflow-hidden flex justify-center items-center bg-gray-100 dark:bg-gray-800">
-          <img src={legend.image} alt={legend.name} className="max-h-full max-w-full object-contain" />
-        </div>
-        <div className="p-3 flex flex-col flex-1">
-          <div className="flex justify-between items-start mb-1">
-            <span className="text-xs px-2 py-0.5 rounded-full border" style={{ borderColor: '#008000', color: '#008000', backgroundColor: 'rgba(0,128,0,0.1)' }}>
-              {legend.category.toUpperCase()}
-            </span>
-            <span className="flex items-center gap-1 text-gray-400 text-xs"><RiCalendarLine /> {legend.era}</span>
-          </div>
-          <h3 className="text-lg md:text-xl font-bold mb-0.5">{legend.name}</h3>
-          <p className="text-sm font-medium" style={{ color: '#008000' }}>{legend.title}</p>
-          {legend.honor && <p className="text-xs mt-1 flex items-center gap-1" style={{ color: '#008000' }}><RiAwardLine /> {legend.honor}</p>}
+      <div className="relative flex flex-col h-full bg-gradient-to-b from-white via-emerald-50 to-white dark:from-zinc-900 dark:via-zinc-950 dark:to-zinc-900">
+        {/* Subtle green shimmer overlay */}
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(0,128,0,0.09),transparent_50%)] pointer-events-none" />
 
-          {/* Stats */}
-          <div className="grid grid-cols-4 gap-1 mt-2 mb-1">
-            {["gold","silver","bronze","international"].map((stat)=>(
-              <div key={stat} className="text-center p-1 rounded-md bg-gray-100 dark:bg-gray-800/30">
-                {stat === "gold" && <RiTrophyLine className="mx-auto mb-0.5 text-yellow-400" />}
-                {stat === "silver" && <RiMedalLine className="mx-auto mb-0.5 text-gray-400" />}
-                {stat === "bronze" && <RiMedalLine className="mx-auto mb-0.5 text-[#CD7F32]" />}
-                {stat === "international" && <RiFlag2Line className="mx-auto mb-0.5 text-blue-400" />}
-                <span className="font-bold text-sm block">{legend.stats[stat]}</span>
-                <span className="text-xs block">{stat === "international" ? "Events" : stat.charAt(0).toUpperCase()+stat.slice(1)}</span>
+        {/* Image area */}
+        <div className="relative w-full aspect-[3/4] min-h-[200px] overflow-hidden">
+          <div className="absolute inset-0 bg-gradient-to-t from-black/65 via-transparent to-transparent z-10" />
+          {legend.image ? (
+            <img
+              src={legend.image}
+              alt={legend.name}
+              loading="lazy"
+              className="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-500"
+            />
+          ) : (
+            <div className="w-full h-full flex items-center justify-center bg-emerald-100 dark:bg-emerald-900/20">
+              <RiUserStarLine className="text-5xl text-emerald-700/40 dark:text-emerald-400/40" />
+            </div>
+          )}
+          {/* Accent line */}
+          <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-emerald-500/60 to-transparent" />
+        </div>
+
+        {/* Content */}
+        <div className="relative p-4 flex flex-col flex-1">
+          <div className="flex justify-between items-start gap-2 mb-2">
+            <span className="text-[10px] font-semibold tracking-widest uppercase px-2 py-1 rounded-md bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-700/40">
+              {legend.category}
+            </span>
+            {legend.era && (
+              <span className="flex items-center gap-1 text-gray-600 dark:text-emerald-200/80 text-xs">
+                <RiCalendarLine className="text-emerald-600/70 dark:text-emerald-400/70" /> {legend.era}
+              </span>
+            )}
+          </div>
+
+          <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-1 line-clamp-2">{legend.name}</h3>
+          <p className="text-sm text-emerald-700 dark:text-emerald-300/90 line-clamp-1">{legend.title}</p>
+          {legend.honor && (
+            <p className="text-xs text-emerald-600 dark:text-emerald-400/80 mt-1 flex items-center gap-1">
+              <RiAwardLine /> {legend.honor}
+            </p>
+          )}
+
+          {/* Stats — medal style */}
+          <div className="grid grid-cols-4 gap-2 mt-4">
+            {["gold", "silver", "bronze", "international"].map((stat) => (
+              <div
+                key={stat}
+                className="text-center p-2 rounded-lg bg-emerald-50/80 dark:bg-black/30 border border-emerald-100 dark:border-emerald-900/40"
+              >
+                {stat === "gold" && <RiTrophyLine className="mx-auto mb-0.5 text-emerald-500" size={18} />}
+                {stat === "silver" && <RiMedalLine className="mx-auto mb-0.5 text-gray-300" size={18} />}
+                {stat === "bronze" && <RiMedalLine className="mx-auto mb-0.5 text-emerald-700" size={18} />}
+                {stat === "international" && <RiFlag2Line className="mx-auto mb-0.5 text-emerald-500/80" size={18} />}
+                <span className="font-bold text-emerald-900 dark:text-emerald-100 block text-sm">{legend.stats[stat]}</span>
+                <span className="text-[10px] text-emerald-700/70 dark:text-emerald-200/60 block uppercase">
+                  {stat === "international" ? "Events" : stat}
+                </span>
               </div>
             ))}
           </div>
 
-          <motion.div animate={{ x: [0, 3, 0] }} transition={{ duration: 1.5, repeat: Infinity }} className="text-sm mt-auto flex items-center gap-1 justify-end" style={{ color: '#008000' }}>
-            {isActive ? "Show Less" : "View Full Profile"} <RiArrowRightSLine />
+          {/* CTA */}
+          <motion.div
+            animate={{ x: [0, 4, 0] }}
+            transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+            className="mt-4 pt-3 border-t border-emerald-300/30 dark:border-emerald-500/20 flex items-center justify-end gap-1 text-emerald-700 dark:text-emerald-400 text-sm font-medium"
+          >
+            View Profile <RiArrowRightSLine className="text-emerald-600 dark:text-emerald-400" />
           </motion.div>
         </div>
       </div>
@@ -88,35 +188,74 @@ const LegendCard = ({ legend, isActive, onClick }) => {
   );
 };
 
-// Expanded View
-const ExpandedView = ({ legend, onClose }) => (
-  <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }} className="col-span-full bg-gradient-to-br from-gray-900 to-black rounded-2xl overflow-hidden shadow-xl border border-green-400/30 mb-6">
-    <div className="w-full h-56 relative overflow-hidden">
-      <img src={legend.image} alt={legend.name} className="w-full h-full object-cover object-center opacity-40" />
-      <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent flex justify-between items-end p-4">
-        <div>
-          <h2 className="text-2xl md:text-3xl font-bold text-white">{legend.name}</h2>
-          <div className="flex gap-1 mt-1 flex-wrap">
-            <span className="px-2 py-0.5 rounded-full bg-[#008000] text-white text-xs">{legend.title}</span>
-            {legend.honor && <span className="px-2 py-0.5 rounded-full bg-yellow-500/20 border border-yellow-500 text-yellow-500 text-xs">{legend.honor}</span>}
+// Profile Popup Modal
+const ProfilePopup = ({ legend, onClose }) => {
+  React.useEffect(() => {
+    const onKey = (e) => e.key === "Escape" && onClose();
+    document.addEventListener("keydown", onKey);
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.removeEventListener("keydown", onKey);
+      document.body.style.overflow = "";
+    };
+  }, [onClose]);
+
+  return (
+    <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        className="fixed inset-0 z-[100] flex items-center justify-center p-4"
+        onClick={onClose}
+      >
+        <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" />
+        <motion.div
+          initial={{ opacity: 0, scale: 0.95, y: 20 }}
+          animate={{ opacity: 1, scale: 1, y: 0 }}
+          exit={{ opacity: 0, scale: 0.95, y: 20 }}
+          transition={{ duration: 0.2 }}
+          className="relative w-full max-w-2xl max-h-[90vh] overflow-y-auto bg-gradient-to-br from-zinc-900 via-zinc-950 to-black rounded-2xl shadow-2xl border border-emerald-400/30"
+          onClick={(e) => e.stopPropagation()}
+        >
+          <div className="w-full h-48 sm:h-56 relative overflow-hidden">
+            <img
+              src={legend.image}
+              alt={legend.name}
+              loading="lazy"
+              className="w-full h-full object-cover object-center opacity-40"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/90 to-transparent flex justify-between items-end p-4">
+              <div>
+                <h2 className="text-2xl md:text-3xl font-bold text-white">{legend.name}</h2>
+                <div className="flex gap-1 mt-1 flex-wrap">
+                  <span className="px-2 py-0.5 rounded-full bg-[#008000] text-white text-xs">{legend.title}</span>
+                  {legend.honor && <span className="px-2 py-0.5 rounded-full bg-emerald-100/20 border border-emerald-300 text-emerald-300 text-xs">{legend.honor}</span>}
+                </div>
+              </div>
+              <button
+                onClick={onClose}
+                className="p-2 rounded-full bg-white/10 hover:bg-white/20 text-white transition"
+                aria-label="Close"
+              >
+                ✕
+              </button>
+            </div>
           </div>
-        </div>
-        <button onClick={onClose} className="px-3 py-1 bg-white/10 hover:bg-white/20 text-white rounded-md text-sm">Close</button>
-      </div>
-    </div>
-    <div className="p-4 md:p-6 grid md:grid-cols-2 gap-4 md:gap-6">
-      <div>
-        <h3 className="text-lg font-bold mb-1 flex items-center gap-1" style={{ color: '#008000' }}><RiTrophyLine /> Achievements</h3>
-        <MotionList items={legend.achievements} direction="left" />
-      </div>
-      <div>
-        <h3 className="text-lg font-bold mb-1 flex items-center gap-1" style={{ color: '#008000' }}><RiFlag2Line /> Participations</h3>
-        <MotionList items={legend.participations} direction="right" />
-        {legend.social && <div className="mt-2 p-2 bg-gray-800/30 rounded-md border border-gray-700 text-sm"><p className="font-semibold" style={{ color: '#008000' }}>Follow: {legend.social}</p></div>}
-      </div>
-    </div>
-  </motion.div>
-);
+          <div className="p-4 md:p-6 grid md:grid-cols-2 gap-4 md:gap-6">
+            <div>
+              <h3 className="text-lg font-bold mb-1 flex items-center gap-1" style={{ color: '#008000' }}><RiTrophyLine /> Achievements</h3>
+              <MotionList items={legend.achievements} direction="left" />
+            </div>
+            <div>
+              <h3 className="text-lg font-bold mb-1 flex items-center gap-1" style={{ color: '#008000' }}><RiFlag2Line /> Participations</h3>
+              <MotionList items={legend.participations} direction="right" />
+              {legend.social && <div className="mt-2 p-2 bg-gray-800/30 rounded-md border border-gray-700 text-sm"><p className="font-semibold" style={{ color: '#008000' }}>Follow: {legend.social}</p></div>}
+            </div>
+          </div>
+        </motion.div>
+      </motion.div>
+  );
+};
 
 // Main Legends Component
 const Legends = () => {
@@ -124,10 +263,69 @@ const Legends = () => {
   const [filter, setFilter] = useState("all");
   const [search, setSearch] = useState("");
 
-  const filteredLegends = legends.filter(l => (filter === "all" || l.category === filter) && l.name.toLowerCase().includes(search.toLowerCase()));
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+  const [retryNonce, setRetryNonce] = useState(0);
+  const [rawLegends, setRawLegends] = useState([]);
+
+  useEffect(() => {
+    let alive = true;
+    setLoading(true);
+    setError("");
+
+    axiosInstance
+      .get("/legends")
+      .then((res) => {
+        if (!alive) return;
+        const list = Array.isArray(res?.data?.data) ? res.data.data : [];
+        setRawLegends(list);
+      })
+      .catch((e) => {
+        if (!alive) return;
+        setRawLegends([]);
+        setError(
+          e?.response?.data?.message ||
+            e?.message ||
+            "Failed to load legends."
+        );
+      })
+      .finally(() => {
+        if (!alive) return;
+        setLoading(false);
+      });
+
+    return () => {
+      alive = false;
+    };
+  }, [retryNonce]);
+
+  const normalizedLegends = useMemo(
+    () => (rawLegends || []).map((d) => normalizeLegend(d)),
+    [rawLegends]
+  );
+
+  const filteredLegends = useMemo(() => {
+    const q = search.trim().toLowerCase();
+    return normalizedLegends.filter((l) => {
+      if (filter !== "all" && l.category !== filter) return false;
+      if (q && !String(l.name || "").toLowerCase().includes(q)) return false;
+      return true;
+    });
+  }, [normalizedLegends, filter, search]);
+
+  useEffect(() => {
+    // If the active legend is filtered out, close it.
+    if (
+      activeLegend == null ||
+      filteredLegends.some((l) => String(l.id) === String(activeLegend))
+    ) {
+      return;
+    }
+    setActiveLegend(null);
+  }, [filteredLegends, activeLegend]);
 
   return (
-    <section className="w-full py-12 lg:py-16 bg-white dark:bg-black transition-colors duration-700">
+    <section id="legends" className="w-full py-12 lg:py-16 bg-white dark:bg-black transition-colors duration-700">
       <div className="max-w-6xl mx-auto text-center px-4 sm:px-6 lg:px-8 mb-10">
         <div className="inline-block p-3 bg-[#008000]/20 rounded-full mb-4"><RiUserStarLine className="text-4xl" style={{ color: '#008000' }} /></div>
         <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-1">Our <span className="text-transparent bg-clip-text" style={{ backgroundImage: 'linear-gradient(to right, #008000, #00b000)' }}>Legends</span></h2>
@@ -154,14 +352,49 @@ const Legends = () => {
 
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          <AnimatePresence mode="wait">
-            {filteredLegends.map(legend => (
-              <React.Fragment key={legend.id}>
-                <LegendCard legend={legend} isActive={activeLegend===legend.id} onClick={()=>setActiveLegend(activeLegend===legend.id?null:legend.id)} />
-                {activeLegend===legend.id && <ExpandedView legend={legend} onClose={()=>setActiveLegend(null)} />}
-              </React.Fragment>
-            ))}
-          </AnimatePresence>
+          {loading ? (
+            <div className="space-y-4 col-span-full">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {Array.from({ length: 6 }).map((_, i) => (
+                  <div key={i} className="rounded-xl border border-gray-200 bg-white p-4 animate-pulse">
+                    <div className="h-40 bg-gray-100 rounded-lg" />
+                    <div className="mt-3 h-4 bg-gray-100 rounded w-2/3" />
+                    <div className="mt-2 h-3 bg-gray-100 rounded w-1/2" />
+                  </div>
+                ))}
+              </div>
+            </div>
+          ) : error ? (
+            <div className="col-span-full rounded-2xl border border-red-200 dark:border-red-900/40 bg-white dark:bg-zinc-900 p-6 text-center">
+              <div className="text-red-700 dark:text-red-400 font-semibold">Could not load legends</div>
+              <p className="text-sm text-gray-600 mt-2">{error}</p>
+              <button
+                type="button"
+                onClick={() => setRetryNonce((n) => n + 1)}
+                className="mt-4 inline-flex items-center justify-center rounded-xl bg-[#008000] text-white px-5 py-2 text-sm font-semibold"
+              >
+                Retry
+              </button>
+            </div>
+          ) : (
+            <>
+              <AnimatePresence>
+                {filteredLegends.map((legend) => (
+                  <LegendCard
+                    key={legend.id}
+                    legend={legend}
+                    onClick={() => setActiveLegend(legend.id)}
+                  />
+                ))}
+              </AnimatePresence>
+              <AnimatePresence>
+                {activeLegend && (() => {
+                  const sel = filteredLegends.find((l) => String(l.id) === String(activeLegend));
+                  return sel ? <ProfilePopup key={activeLegend} legend={sel} onClose={() => setActiveLegend(null)} /> : null;
+                })()}
+              </AnimatePresence>
+            </>
+          )}
         </div>
       </div>
     </section>

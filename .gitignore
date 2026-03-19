@@ -24,5 +24,6 @@ dist-ssr
 *.sw?
 
 # Backend secrets & uploads
+/.env
 backend/.env
 backend/uploads/

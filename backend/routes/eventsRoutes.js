@@ -2,6 +2,7 @@ import express from "express";
 import { protect, admin } from "../middleware/authMiddleware.js";
 import {
   listEvents,
+  getNextEvent,
   getEventById,
   createEvent,
   updateEvent,
@@ -11,6 +12,7 @@ import {
 const router = express.Router();
 
 router.get("/", listEvents);
+router.get("/next", getNextEvent);
 router.get("/:id", getEventById);
 // Admin CRUD is served under /api/admin/events (see adminEventsRoutes.js)
 

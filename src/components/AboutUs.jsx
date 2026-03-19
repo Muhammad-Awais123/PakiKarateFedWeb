@@ -146,6 +146,7 @@ const AboutUs = () => {
               <img
                 src={assets.karate_image} // your AI-generated image
                 alt="Karate Practitioners"
+                loading="lazy"
                 className="w-full h-auto object-cover rounded-2xl"
               />
               <div className="absolute inset-0 bg-gradient-to-tr from-[#008000]/20 to-transparent mix-blend-overlay" />

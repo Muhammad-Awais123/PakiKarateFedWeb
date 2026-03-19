@@ -26,9 +26,9 @@ router.delete("/registration-events/:id", protect, admin, adminDeleteEvent);
 router.get("/schema", protect, admin, adminGetSchema);
 router.post("/schema", protect, admin, adminUpsertSchema);
 
-// Admin: manage registrations (approve/reject)
-router.get("/registrations", protect, admin, adminListRegistrations);
-router.put("/registrations/:id/status", protect, admin, adminUpdateRegistrationStatus);
+// Schema-driven registrations (separate from event /registrations)
+router.get("/schema-registrations", protect, admin, adminListRegistrations);
+router.put("/schema-registrations/:id/status", protect, admin, adminUpdateRegistrationStatus);
 
 export default router;
 

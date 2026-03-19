@@ -91,10 +91,11 @@ const Footer = () => {
           <div>
             <h3 className="font-semibold mb-4 text-white">Quick Links</h3>
             <ul className="space-y-2 text-white/80 text-sm">
-              <li><a href="#events" className="hover:text-[#00ff66] transition-colors">Events</a></li>
-              <li><a href="#registration" className="hover:text-[#00ff66] transition-colors">Register</a></li>
-              <li><a href="#rankings" className="hover:text-[#00ff66] transition-colors">Rankings</a></li>
-              <li><a href="#contact" className="hover:text-[#00ff66] transition-colors">Contact</a></li>
+              <li><a href="/#events" className="hover:text-[#00ff66] transition-colors">Events</a></li>
+              <li><a href="/events" className="hover:text-[#00ff66] transition-colors">All Events</a></li>
+              <li><a href="/#rankings" className="hover:text-[#00ff66] transition-colors">Rankings</a></li>
+              <li><a href="/#legends" className="hover:text-[#00ff66] transition-colors">Legends</a></li>
+              <li><a href="/#contact-us" className="hover:text-[#00ff66] transition-colors">Contact</a></li>
             </ul>
           </div>
 

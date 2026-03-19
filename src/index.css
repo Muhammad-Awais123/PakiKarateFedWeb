@@ -4,12 +4,21 @@
 
 @custom-variant dark (&:where(.dark, .dark *));
 
-*{
+* {
   font-family: "Manrope", sans-serif;
- 
-  cursor: none;
 }
 /* #008000 */
 @theme {
   --color-primary:#008000;
+}
+
+@keyframes countdownFade {
+  0% {
+    opacity: 0.35;
+    transform: translateY(2px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }

@@ -57,7 +57,12 @@ const ContactUs = () => {
         <div>
           <p className='mb-2 text-sm font-medium'>Your name</p>
           <div className='flex pl-3 rounded-lg border border-gray-300 dark:border-gray-600'>
-            <img src={person_icon} alt="person" className="w-5 h-5 my-auto" />
+            <img
+              src={person_icon}
+              alt="person"
+              loading="lazy"
+              className="w-5 h-5 my-auto"
+            />
             <input name="name" type="text" placeholder='Enter your name' className='w-full p-3 text-sm outline-none bg-transparent' required/>
           </div>
         </div>
@@ -65,7 +70,12 @@ const ContactUs = () => {
         <div>
           <p className='mb-2 text-sm font-medium'>Email id</p>
           <div className='flex pl-3 rounded-lg border border-gray-300 dark:border-gray-600'>
-            <img src={email_icon} alt="email" className="w-5 h-5 my-auto" />
+            <img
+              src={email_icon}
+              alt="email"
+              loading="lazy"
+              className="w-5 h-5 my-auto"
+            />
             <input name="email" type="email" placeholder='Enter your email' className='w-full p-3 text-sm outline-none bg-transparent' required/>
           </div>
         </div>
@@ -82,7 +92,7 @@ const ContactUs = () => {
         </div>
 
         <button type="submit" className='w-max flex gap-2 bg-[#008000] text-white text-sm px-10 py-3 rounded-full cursor-pointer hover:scale-103 transition-all'>
-          Submit <img src={arrow_icon} alt="arrow" className='w-4'/>
+          Submit <img src={arrow_icon} alt="arrow" loading="lazy" className='w-4'/>
         </button>
 
       </motion.form>

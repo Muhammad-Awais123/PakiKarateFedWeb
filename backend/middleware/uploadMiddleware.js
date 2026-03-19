@@ -10,9 +10,11 @@ const uploadsRoot = path.join(process.cwd(), "uploads");
 const registrationUploads = path.join(uploadsRoot, "registrations");
 const eventUploads = path.join(uploadsRoot, "events");
 const paymentUploads = path.join(uploadsRoot, "payments");
+const personsUploads = path.join(uploadsRoot, "persons");
 ensureDir(registrationUploads);
 ensureDir(eventUploads);
 ensureDir(paymentUploads);
+ensureDir(personsUploads);
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
@@ -62,6 +64,34 @@ export const uploadEventImage = multer({
   },
 });
 
+// WKF-style event uploads:
+// - bannerImage: image/*
+// - bulletinPdf / programmePdf: application/pdf
+// Keep legacy `image` support for older admin UI forms.
+export const uploadEventFiles = multer({
+  storage: eventStorage,
+  limits: { fileSize: 10 * 1024 * 1024 }, // 10MB (images + PDFs)
+  fileFilter: (req, file, cb) => {
+    const ok =
+      (typeof file.mimetype === "string" && file.mimetype.startsWith("image/")) ||
+      file.mimetype === "application/pdf";
+    if (!ok) {
+      return cb(
+        new Error(
+          "Invalid file type. Only image/* and application/pdf are allowed."
+        )
+      );
+    }
+    cb(null, true);
+  },
+}).fields([
+  { name: "bannerImage", maxCount: 1 },
+  { name: "bulletinPdf", maxCount: 1 },
+  { name: "programmePdf", maxCount: 1 },
+  // Legacy alias (older admin UI)
+  { name: "image", maxCount: 1 },
+]);
+
 const paymentStorage = multer.diskStorage({
   destination: (req, file, cb) => {
     cb(null, paymentUploads);
@@ -85,4 +115,29 @@ export const uploadPaymentScreenshot = multer({
     cb(null, true);
   },
 });
+
+const personStorage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, personsUploads);
+  },
+  filename: (req, file, cb) => {
+    const safeBase = (file.originalname || "upload")
+      .toLowerCase()
+      .replace(/[^a-z0-9.\-_]/g, "-")
+      .slice(0, 80);
+    const unique = `${Date.now()}-${Math.random().toString(16).slice(2)}`;
+    cb(null, `${unique}-${safeBase}`);
+  },
+});
+
+export const uploadPersonPhoto = multer({
+  storage: personStorage,
+  limits: { fileSize: 5 * 1024 * 1024 }, // 5MB
+  fileFilter: (req, file, cb) => {
+    const ok = ["image/jpeg", "image/png", "image/webp", "image/jpg"].includes(file.mimetype);
+    if (!ok) return cb(new Error("Invalid file type. Only JPG/PNG/WEBP images are allowed."));
+    cb(null, true);
+  },
+});
+
 

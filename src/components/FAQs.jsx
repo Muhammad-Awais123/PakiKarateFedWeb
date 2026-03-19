@@ -65,15 +65,18 @@ const FAQ = () => {
   });
 
   return (
-    <section id="faq" className="relative w-full py-20 lg:py-28 bg-gray-50 dark:bg-black">
+    <section id="faq" className="relative w-full py-12 lg:py-16 bg-gray-50 dark:bg-black">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
-        <div className="text-center mb-12">
-          <h2 className="text-4xl sm:text-5xl font-bold text-gray-900 dark:text-white mb-4">
+        <div className="text-center mb-8">
+          <span className="inline-block px-3 py-1.5 bg-[#008000]/10 rounded-full text-[#008000] text-sm font-semibold mb-3">
+            FAQ
+          </span>
+          <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white mb-2">
             Frequently Asked <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#008000] to-[#00ff00]">Questions</span>
           </h2>
-          <p className="text-gray-600 dark:text-gray-300 text-lg max-w-2xl mx-auto">
-            Everything you need to know about Pakistan Karate Federation. Can't find what you're looking for? Contact our support team.
+          <p className="text-gray-600 dark:text-gray-300 text-sm max-w-xl mx-auto">
+            Everything you need to know about PKF.
           </p>
         </div>
 

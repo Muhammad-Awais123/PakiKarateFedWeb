@@ -27,6 +27,7 @@ const Hero = () => {
       <motion.img
         src={HeroImage}
         alt="Hero Background"
+        loading="lazy"
         initial={{ scale: 1.1 }}
         animate={{ scale: 1 }}
         transition={{ duration: 12, ease: "easeOut" }}
@@ -118,7 +119,7 @@ const Hero = () => {
             View Championships
           </a>
           <a
-            href="#registration"
+            href="/events"
             className="w-full sm:w-auto px-8 py-3 bg-transparent border-2 border-white/30 text-white rounded-full font-semibold text-lg transition hover:border-[#008000] hover:text-[#008000] backdrop-blur-sm"
           >
             Join the Dojo
@@ -136,6 +137,7 @@ const Hero = () => {
             <img
               src={assets.Karate_Image} // <- your AI generated karate image
               alt="Karate Practitioners"
+              loading="lazy"
               className="w-full h-auto object-cover"
             />
             <div className="absolute inset-0 bg-gradient-to-tr from-[#008000]/20 to-transparent mix-blend-overlay" />
