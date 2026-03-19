@@ -14,6 +14,16 @@ const API_URL = isLocalFrontend
   ? "http://localhost:5000/api"
   : import.meta.env.VITE_API_BASE_URL || "http://localhost:5000/api";
 
+function deriveApiOrigin(apiUrl) {
+  try {
+    return new URL(apiUrl).origin;
+  } catch {
+    return "http://localhost:5000";
+  }
+}
+
+export const API_ORIGIN = deriveApiOrigin(API_URL);
+
 const adminPathEnv = import.meta.env.VITE_ADMIN_PATH;
 const ADMIN_PATH = adminPathEnv
   ? String(adminPathEnv).startsWith("/")

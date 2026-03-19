@@ -1,6 +1,7 @@
+import { EVENT_CATEGORY_OPTIONS } from "../constants/eventEnums.js";
+
 const EVENT_LEVELS = ["National", "International"];
 const EVENT_TYPES = ["Games", "Championship"];
-const EVENT_CATEGORIES = ["Men", "Women", "Junior", "Senior"];
 
 const toIso = (value) => {
   if (!value) return "";
@@ -19,7 +20,7 @@ const toType = (raw) => {
 };
 
 const toCategory = (raw) => {
-  if (EVENT_CATEGORIES.includes(raw?.category)) return raw.category;
+  if (EVENT_CATEGORY_OPTIONS.includes(raw?.category)) return raw.category;
   return "Senior";
 };
 
@@ -57,5 +58,13 @@ export default function normalizeEvent(raw = {}) {
     description: raw.description || "",
     image: raw.image || raw.bannerImage || "",
     status,
+    // Pass-through for registration UI + admin display (must match API)
+    registrationOpen: Boolean(raw.registrationOpen),
+    registrationFee: raw.registrationFee || "",
+    registrationDeadline: raw.registrationDeadline
+      ? toIso(raw.registrationDeadline)
+      : "",
+    paymentDetails: raw.paymentDetails || {},
+    slug: raw.slug || "",
   };
 }

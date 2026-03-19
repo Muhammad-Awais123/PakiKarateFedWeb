@@ -37,6 +37,18 @@ function getUploadedPath(req, fieldName) {
   return `/uploads/events/${f.filename}`;
 }
 
+function normalizeNullableEnum(value) {
+  if (value === undefined || value === null) return value;
+  if (typeof value === "string" && value.trim() === "") return null;
+  return value;
+}
+
+function normalizeOptionalObjectId(value) {
+  if (value === undefined || value === null) return undefined;
+  if (typeof value === "string" && value.trim() === "") return undefined;
+  return value;
+}
+
 function coalesceLegacyImages(updates) {
   // If only legacy `image` exists, map it to new `bannerImage`.
   if (!updates.bannerImage && updates.image) {
@@ -120,7 +132,8 @@ export const adminListEvents = async (req, res) => {
 };
 
 export const adminCreateEvent = async (req, res) => {
-  const payload = { ...(req.body || {}) };
+  try {
+    const payload = { ...(req.body || {}) };
 
   // Files (bannerImage + pdfs)
   const bannerImagePath = getUploadedPath(req, "bannerImage") || getUploadedPath(req, "image");
@@ -169,25 +182,40 @@ export const adminCreateEvent = async (req, res) => {
     else delete payload.disciplines;
   }
 
-  // Coerce booleans if present
-  const boolFields = ["registrationOpen", "statusOverride", "isFeatured", "showCountdown", "isPublished"];
-  for (const bf of boolFields) {
-    if (bf in payload) payload[bf] = parseBool(payload[bf]);
+    // Coerce booleans if present
+    const boolFields = ["registrationOpen", "statusOverride", "isFeatured", "showCountdown", "isPublished"];
+    for (const bf of boolFields) {
+      if (bf in payload) payload[bf] = parseBool(payload[bf]);
+    }
+
+    // Normalize optional fields that often arrive as empty strings from forms.
+    if ("seriesName" in payload) payload.seriesName = normalizeNullableEnum(payload.seriesName);
+    if ("categoryId" in payload) {
+      const normalizedCategoryId = normalizeOptionalObjectId(payload.categoryId);
+      if (normalizedCategoryId === undefined) delete payload.categoryId;
+      else payload.categoryId = normalizedCategoryId;
+    }
+
+    // Legacy compatibility: map bannerImage <-> image so current frontend keeps working.
+    coalesceLegacyImages(payload);
+
+    // Convenience mapping: if UI only sends `type`, also populate `eventType`.
+    if (!payload.eventType && payload.type) payload.eventType = payload.type;
+
+    const created = await Event.create(payload);
+    const populated = await Event.findById(created._id).populate("categoryId", "name slug");
+    res.status(201).json({ success: true, data: populated });
+  } catch (err) {
+    if (err?.name === "ValidationError" || err?.name === "CastError") {
+      return res.status(400).json({ message: err.message });
+    }
+    return res.status(500).json({ message: "Failed to create event" });
   }
-
-  // Legacy compatibility: map bannerImage <-> image so current frontend keeps working.
-  coalesceLegacyImages(payload);
-
-  // Convenience mapping: if UI only sends `type`, also populate `eventType`.
-  if (!payload.eventType && payload.type) payload.eventType = payload.type;
-
-  const created = await Event.create(payload);
-  const populated = await Event.findById(created._id).populate("categoryId", "name slug");
-  res.status(201).json({ success: true, data: populated });
 };
 
 export const adminUpdateEvent = async (req, res) => {
-  const updates = { ...(req.body || {}) };
+  try {
+    const updates = { ...(req.body || {}) };
 
   // Files (bannerImage + pdfs)
   const bannerImagePath = getUploadedPath(req, "bannerImage") || getUploadedPath(req, "image");
@@ -231,24 +259,38 @@ export const adminUpdateEvent = async (req, res) => {
     else delete updates.disciplines;
   }
 
-  // Coerce booleans if present
-  const boolFields = ["registrationOpen", "statusOverride", "isFeatured", "showCountdown", "isPublished"];
-  for (const bf of boolFields) {
-    if (bf in updates) updates[bf] = parseBool(updates[bf]);
+    // Coerce booleans if present
+    const boolFields = ["registrationOpen", "statusOverride", "isFeatured", "showCountdown", "isPublished"];
+    for (const bf of boolFields) {
+      if (bf in updates) updates[bf] = parseBool(updates[bf]);
+    }
+
+    // Normalize optional fields that often arrive as empty strings from forms.
+    if ("seriesName" in updates) updates.seriesName = normalizeNullableEnum(updates.seriesName);
+    if ("categoryId" in updates) {
+      const normalizedCategoryId = normalizeOptionalObjectId(updates.categoryId);
+      if (normalizedCategoryId === undefined) delete updates.categoryId;
+      else updates.categoryId = normalizedCategoryId;
+    }
+
+    coalesceLegacyImages(updates);
+
+    // Convenience mapping: if UI only sends `type`, also populate `eventType`.
+    if (!updates.eventType && updates.type) updates.eventType = updates.type;
+
+    const updated = await Event.findByIdAndUpdate(req.params.id, updates, {
+      new: true,
+      runValidators: true,
+    }).populate("categoryId", "name slug");
+
+    if (!updated) return res.status(404).json({ message: "Event not found" });
+    res.json({ success: true, data: updated });
+  } catch (err) {
+    if (err?.name === "ValidationError" || err?.name === "CastError") {
+      return res.status(400).json({ message: err.message });
+    }
+    return res.status(500).json({ message: "Failed to update event" });
   }
-
-  coalesceLegacyImages(updates);
-
-  // Convenience mapping: if UI only sends `type`, also populate `eventType`.
-  if (!updates.eventType && updates.type) updates.eventType = updates.type;
-
-  const updated = await Event.findByIdAndUpdate(req.params.id, updates, {
-    new: true,
-    runValidators: true,
-  }).populate("categoryId", "name slug");
-
-  if (!updated) return res.status(404).json({ message: "Event not found" });
-  res.json({ success: true, data: updated });
 };
 
 export const adminTogglePublish = async (req, res) => {

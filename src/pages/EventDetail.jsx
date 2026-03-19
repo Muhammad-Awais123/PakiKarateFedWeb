@@ -3,12 +3,8 @@ import { Link, useParams } from "react-router-dom";
 import CountdownTimer from "../events/CountdownTimer";
 import EventCard from "../events/EventCard";
 import { fetchEventById, fetchEvents as fetchEventsApi } from "../services/eventsApi";
-
-const API_ORIGIN =
-  import.meta.env.VITE_API_ORIGIN ||
-  (typeof window !== "undefined" && window.location?.origin?.includes("localhost")
-    ? "http://localhost:5000"
-    : "");
+import EventRegistrationForm from "../components/EventRegistrationForm";
+import { API_ORIGIN } from "../utils/axiosConfig.js";
 
 function getImageUrl(path) {
   if (!path) return "";
@@ -34,6 +30,7 @@ export default function EventDetail() {
   const [relatedEvents, setRelatedEvents] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [registrationMessage, setRegistrationMessage] = useState("");
 
   useEffect(() => {
     let active = true;
@@ -170,6 +167,28 @@ export default function EventDetail() {
           {event.description || "Description will be published soon."}
         </p>
       </div>
+
+      {event.registrationOpen && isUpcoming && event._id ? (
+        <div className="rounded-2xl border border-emerald-100 dark:border-emerald-900/40 bg-white dark:bg-zinc-950 p-6 space-y-3">
+          <h2 className="text-xl font-semibold text-gray-900 dark:text-zinc-100">
+            Register for this event
+          </h2>
+          <p className="text-sm text-gray-600 dark:text-zinc-400">
+            Submit your details and payment proof. Your registration will appear as pending until an admin approves it.
+          </p>
+          {registrationMessage ? (
+            <p className="text-sm text-emerald-700 dark:text-emerald-400 font-medium">
+              {registrationMessage}
+            </p>
+          ) : null}
+          <EventRegistrationForm
+            event={event}
+            onSuccess={() =>
+              setRegistrationMessage("Thanks — your registration was submitted successfully.")
+            }
+          />
+        </div>
+      ) : null}
 
       {relatedEvents.length > 0 && (
         <div className="space-y-4">

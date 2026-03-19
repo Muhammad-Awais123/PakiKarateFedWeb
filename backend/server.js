@@ -109,12 +109,24 @@ app.use("/api/admin/legends", ...adminMiddleware, adminLegendsRoutes);
 
 // MongoDB connection
 mongoose.set("strictQuery", false);
-mongoose.connect(process.env.MONGO_URI, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true
-})
-.then(() => console.log("MongoDB Connected ✅"))
-.catch(err => console.error("MongoDB connection error:", err));
+
+const startServer = async () => {
+  if (!process.env.MONGO_URI) {
+    console.error("Missing MONGO_URI in backend/.env");
+    process.exit(1);
+  }
+
+  try {
+    await mongoose.connect(process.env.MONGO_URI);
+    console.log("MongoDB Connected ✅");
+  } catch (err) {
+    console.error("MongoDB connection error:", err.message);
+    process.exit(1);
+  }
+
+  const PORT = process.env.PORT || 5000;
+  app.listen(PORT, () => console.log(`Server running on port ${PORT} 🚀`));
+};
 
 // Global error handler
 app.use((err, req, res, next) => {
@@ -122,6 +134,5 @@ app.use((err, req, res, next) => {
   res.status(500).json({ message: err.message || "Server Error" });
 });
 
-// Start server
-const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => console.log(`Server running on port ${PORT} 🚀`));
+// Start server only after DB is connected
+startServer();

@@ -1,10 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import axios from "../../utils/axiosConfig.js";
+import { API_ORIGIN } from "../../utils/axiosConfig.js";
 import toast from "react-hot-toast";
-
-const API_ORIGIN =
-  import.meta.env.VITE_API_ORIGIN ||
-  (typeof window !== "undefined" ? "http://localhost:5000" : "");
 
 const PROVINCES = [
   "All",
